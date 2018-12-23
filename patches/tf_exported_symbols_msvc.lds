@@ -1,0 +1,42 @@
+LIBRARY tensorflow_cc
+EXPORTS
+    ??0MetaGraphDef@tensorflow@@QEAA@XZ
+    ??1MetaGraphDef@tensorflow@@UEAA@XZ
+    ??0LogMessageFatal@internal@tensorflow@@QEAA@PEBDH@Z
+    ??1LogMessageFatal@internal@tensorflow@@UEAA@XZ
+    ??0CheckOpMessageBuilder@internal@tensorflow@@QEAA@PEBD@Z
+    ??1CheckOpMessageBuilder@internal@tensorflow@@QEAA@XZ
+    ?ForVar2@CheckOpMessageBuilder@internal@tensorflow@@QEAAPEAV?$basic_ostream@DU?$char_traits@D@std@@@std@@XZ
+    ?NewString@CheckOpMessageBuilder@internal@tensorflow@@QEAAPEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+    ?GetVarint32PtrFallback@core@tensorflow@@YAPEBDPEBD0PEAI@Z
+    ?ToString@Status@tensorflow@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+    ?SlowCopyFrom@Status@tensorflow@@AEAAXPEBUState@12@@Z
+    ?_GraphDef_default_instance_@tensorflow@@3VGraphDefDefaultTypeInternal@1@A
+    ?NewSession@tensorflow@@YA?AVStatus@1@AEBUSessionOptions@1@PEAPEAVSession@1@@Z
+    ??0SessionOptions@tensorflow@@QEAA@XZ
+    ??1ConfigProto@tensorflow@@UEAA@XZ
+    ?ReadBinaryProto@tensorflow@@YA?AVStatus@1@PEAVEnv@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PEAVMessageLite@protobuf@google@@@Z
+    ?Default@Env@tensorflow@@SAPEAV12@XZ
+    ?CheckIsAlignedAndSingleElement@Tensor@tensorflow@@AEBAXXZ
+    ?_SaverDef_default_instance_@tensorflow@@3VSaverDefDefaultTypeInternal@1@A
+    ?CheckTypeAndIsAligned@Tensor@tensorflow@@AEBAXW4DataType@2@@Z
+    ??1Tensor@tensorflow@@QEAA@XZ
+    ??0Tensor@tensorflow@@QEAA@W4DataType@1@AEBVTensorShape@1@@Z
+    ??0?$TensorShapeBase@VTensorShape@tensorflow@@@tensorflow@@QEAA@XZ
+    ??0?$TensorShapeBase@VTensorShape@tensorflow@@@tensorflow@@QEAA@V?$Span@$$CB_J@absl@@@Z
+    ?DestructorOutOfLine@TensorShapeRep@tensorflow@@AEAAXXZ
+    ?TfCheckOpHelperOutOfLine@tensorflow@@YAPEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVStatus@1@PEBD@Z
+    ?DebugString@Tensor@tensorflow@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+    ?SlowCopyFrom@TensorShapeRep@tensorflow@@AEAAXAEBV12@@Z
+    ?dim_size@?$TensorShapeBase@VTensorShape@tensorflow@@@tensorflow@@QEBA_JH@Z
+    ?CheckDimsEqual@TensorShape@tensorflow@@AEBAXH@Z
+    ?CheckDimsAtLeast@TensorShape@tensorflow@@AEBAXH@Z
+
+    ??0Tensor@tensorflow@@QEAA@XZ
+    ??0GraphDef@tensorflow@@QEAA@XZ
+    ??1GraphDef@tensorflow@@UEAA@XZ
+    
+    ?CheckType@Tensor@tensorflow@@AEBAXW4DataType@2@@Z
+    ?CopyFromInternal@Tensor@tensorflow@@AEAAXAEBV12@AEBVTensorShape@2@@Z
+    ??1NodeDef@tensorflow@@UEAA@XZ
+    ??0NodeDef@tensorflow@@QEAA@AEBV01@@Z
