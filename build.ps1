@@ -7,16 +7,16 @@ $ErrorActionPreference = "Stop"
 
 # Ask the specific version of Tensorflow.
 $SupportedVersions = @("v1.11.0")
-$ChoiceIndex = 1
-$Options = $SupportedVersions | ForEach-Object {
-    New-Object System.Management.Automation.Host.ChoiceDescription "&$ChoiceIndex - $_"
-    $ChoiceIndex += 1
+$options = [Array]::CreateInstance([System.Management.Automation.Host.ChoiceDescription], $SupportedVersions.Count + 1)
+for ($i = 0; $i -lt $SupportedVersions.Count; $i++) {
+    $options[$i] = [System.Management.Automation.Host.ChoiceDescription]::new("&$($i + 1) - $($SupportedVersions[$i])")
 }
-$Options += New-Object System.Management.Automation.Host.ChoiceDescription "&Select another version"
-$Title = "Select a Tensorflow version:"
-$ChosenIndex = $Host.ui.PromptForChoice($Title, "", $Options, 0)
+$options[$options.Count - 1] = [System.Management.Automation.Host.ChoiceDescription]::new("&Select another version")
+# $Options.add($CustomVersion)
+$title = "Select a Tensorflow version:"
+$chosenIndex = $Host.ui.PromptForChoice($title, "", $options, 0)
 
-if ($ChosenIndex -eq $SupportedVersions.Length) {
+if ($chosenIndex -eq $SupportedVersions.Length) {
     $InstallVersion = Read-Host "Please input the version number (e.g. v1.11.0)"
 } else {
     $InstallVersion = $SupportedVersions[$ChosenIndex]
@@ -26,7 +26,7 @@ if ($ChosenIndex -eq $SupportedVersions.Length) {
 function CheckInstalled {
     param ([string]$ExeName)
     $Installed = Get-Command $ExeName -All -ErrorAction SilentlyContinue
-    if (($Installed) -eq $null) {
+    if ($null -eq ($Installed)) {
        Write-Host "Unable to find $ExeName in your PATH" -ForegroundColor Red
        return $False
     } else {
@@ -40,7 +40,7 @@ if (CheckInstalled chocolatey) {
     Write-Host "Chocolatey package manager is already installed." -ForegroundColor Green
 } else {
     Write-Host "Installing Chocolatey package manager."
-    Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 }
 
 # Enable global confirmation for chocolatey package installation.
@@ -73,7 +73,7 @@ if (!(CheckInstalled python)) {
 
 # Get the source code of Tensorflow and apply patch
 git clone https://github.com/tensorflow/tensorflow.git
-cd tensorflow
+Set-Location tensorflow
 git checkout tags/$InstallVersion
 
 # C++ Symbol Patch
@@ -84,12 +84,12 @@ Copy-Item ..\patches\tf_exported_symbols_msvc.lds tensorflow\
 git apply --ignore-space-change --ignore-white ..\patches\eigen_build.patch
 Copy-Item ..\patches\eigen.patch third_party\
 
-cd ..
+Set-Location ..
 Rename-Item tensorflow source
 
 # Setup folder structure
 mkdir build -ErrorAction SilentlyContinue
-cd build
+Set-Location build
 
 $TensorFlowBuildDir = $pwd
 $TensorflowDir=$TensorFlowBuildDir | Split-Path
@@ -107,11 +107,11 @@ mkdir ("$TensorFlowBinDir\tensorflow\include") -ErrorAction SilentlyContinue
 
 # Installing protobuf.
 $ENV:Path+=";$TensorflowDependenciesDir\protobuf\bin\bin"
-cd $TensorflowDependenciesDir
+Set-Location $TensorflowDependenciesDir
 
 mkdir (Join-Path $TensorflowDependenciesDir protobuf) -ErrorAction SilentlyContinue
 
-cd protobuf
+Set-Location protobuf
 $ProtobufSource = "$pwd\source"
 $ProtobufBuild = "$pwd\build"
 $ProtobufBin = "$pwd\bin"
@@ -119,22 +119,21 @@ $ProtobufBin = "$pwd\bin"
 $protobuf_tar="protobuf3.6.0.tar.gz"
 if (!(Test-Path (Join-Path $pwd $protobuf_tar))) {
 	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    wget https://github.com/google/protobuf/archive/v3.6.0.tar.gz -outfile $protobuf_tar
+    Invoke-WebRequest https://github.com/google/protobuf/archive/v3.6.0.tar.gz -outfile $protobuf_tar
 }
 mkdir source -Force
 tar -xf $protobuf_tar --directory source --strip-components=1
 mkdir $ProtobufBuild -ErrorAction SilentlyContinue
 mkdir $ProtobufBin -ErrorAction SilentlyContinue
 
-cd $ProtobufBuild
+Set-Location $ProtobufBuild
 cmake "$ProtobufSource\cmake" -G"Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX="$ProtobufBin" -DCMAKE_BUILD_TYPE=Release -Dprotobuf_BUILD_TESTS=OFF -Dprotobuf_MODULE_COMPATIBLE=ON -Dprotobuf_MSVC_STATIC_RUNTIME=OFF
 cmake --build . --config Release
 cmake --build . --target install --config Release
 
-cd $TensorFlowBuildDir
+Set-Location $TensorFlowBuildDir
 
 # Create python environment.
-$PY_PYTHON=3
 py -3 -m venv venv
 .\venv\Scripts\activate.ps1
 pip3 install six numpy wheel
@@ -144,7 +143,7 @@ pip3 install keras_preprocessing==1.0.3 --no-deps
 # Install dependencies with pacman
 pacman -S --noconfirm patch unzip
 
-cd $TensorFlowSourceDir
+Set-Location $TensorFlowSourceDir
 
 # Cleaning tensorflow.
 bazel clean --expunge
