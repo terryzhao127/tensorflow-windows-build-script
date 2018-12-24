@@ -6,7 +6,7 @@ index 758c94c542..2098899281 100755
          sha256 = "d956415d784fa4e42b6a2a45c32556d6aec9d0a3d8ef48baee2522ab762556a9",
          strip_prefix = "eigen-eigen-fd6845384b86",
          build_file = clean_dep("//third_party:eigen.BUILD"),
-+        patch_file = clean_dep("//third_party:eigen_half.patch"),
++        patch_file = clean_dep("//third_party:eigen.patch"),
      )
  
      tf_http_archive(
