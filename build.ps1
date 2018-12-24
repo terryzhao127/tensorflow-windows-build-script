@@ -6,33 +6,32 @@ Set-StrictMode -Version latest
 $ErrorActionPreference = "Stop"
 
 # Ask the specific version of Tensorflow.
-$SupportedVersions = @("v1.11.0")
-$options = [Array]::CreateInstance([System.Management.Automation.Host.ChoiceDescription], $SupportedVersions.Count + 1)
-for ($i = 0; $i -lt $SupportedVersions.Count; $i++) {
-    $options[$i] = [System.Management.Automation.Host.ChoiceDescription]::new("&$($i + 1) - $($SupportedVersions[$i])")
+$supportedVersions = @("v1.11.0")
+$options = [Array]::CreateInstance([System.Management.Automation.Host.ChoiceDescription], $supportedVersions.Count + 1)
+for ($i = 0; $i -lt $supportedVersions.Count; $i++) {
+    $options[$i] = [System.Management.Automation.Host.ChoiceDescription]::new("&$($i + 1) - $($supportedVersions[$i])")
 }
 $options[$options.Count - 1] = [System.Management.Automation.Host.ChoiceDescription]::new("&Select another version")
-# $Options.add($CustomVersion)
 $title = "Select a Tensorflow version:"
-$chosenIndex = $Host.ui.PromptForChoice($title, "", $options, 0)
+$chosenIndex = $Host.UI.PromptForChoice($title, "", $options, 0)
 
-if ($chosenIndex -eq $SupportedVersions.Length) {
-    $InstallVersion = Read-Host "Please input the version number (e.g. v1.11.0)"
+if ($chosenIndex -eq $supportedVersions.Count) {
+    $installVersion = Read-Host "Please input the version number (e.g. v1.11.0)"
 } else {
-    $InstallVersion = $SupportedVersions[$ChosenIndex]
+    $installVersion = $supportedVersions[$chosenIndex]
 }
 
 # Install dependencies.
 function CheckInstalled {
     param ([string]$ExeName)
-    $Installed = Get-Command $ExeName -All -ErrorAction SilentlyContinue
-    if ($null -eq ($Installed)) {
-       Write-Host "Unable to find $ExeName in your PATH" -ForegroundColor Red
-       return $False
+    $installed = Get-Command $ExeName -All -ErrorAction SilentlyContinue
+    if ($null -eq ($installed)) {
+        Write-Host "Unable to find $ExeName in your PATH" -ForegroundColor Red
+        return $false
     } else {
-        $Version = $Installed.Version
+        $Version = $installed.Version
         Write-Host "Found $ExeName with version $Version" -ForegroundColor Green
-        return $True
+        return $true
     }
 }
 
@@ -74,7 +73,7 @@ if (!(CheckInstalled python)) {
 # Get the source code of Tensorflow and apply patch
 git clone https://github.com/tensorflow/tensorflow.git
 Set-Location tensorflow
-git checkout tags/$InstallVersion
+git checkout tags/$installVersion
 
 # C++ Symbol Patch
 git apply --ignore-space-change --ignore-white ..\patches\cpp_symbol.patch
@@ -91,47 +90,47 @@ Rename-Item tensorflow source
 mkdir build -ErrorAction SilentlyContinue
 Set-Location build
 
-$TensorFlowBuildDir = $pwd
-$TensorflowDir=$TensorFlowBuildDir | Split-Path
-$TensorflowDependenciesDir="$TensorFlowBuildDir\deps"
-$TensorFlowSourceDir="$TensorflowDir\source"
-$TensorFlowBinDir="$TensorflowDir\bin"
-$VenvDir="$TensorFlowBuildDir\venv"
+$tensorFlowBuildDir = $pwd
+$tensorflowDir = $tensorFlowBuildDir | Split-Path
+$tensorflowDependenciesDir = "$tensorFlowBuildDir\deps"
+$tensorFlowSourceDir = "$tensorflowDir\source"
+$tensorFlowBinDir = "$tensorflowDir\bin"
+$venvDir = "$tensorFlowBuildDir\venv"
 
-mkdir $TensorflowDependenciesDir -ErrorAction SilentlyContinue
-mkdir $TensorflowBinDir -ErrorAction SilentlyContinue
-mkdir $VenvDir -ErrorAction SilentlyContinue
+mkdir $tensorflowDependenciesDir -ErrorAction SilentlyContinue
+mkdir $tensorflowBinDir -ErrorAction SilentlyContinue
+mkdir $venvDir -ErrorAction SilentlyContinue
 
-mkdir ("$TensorFlowBinDir\tensorflow\lib") -ErrorAction SilentlyContinue
-mkdir ("$TensorFlowBinDir\tensorflow\include") -ErrorAction SilentlyContinue
+mkdir ("$tensorFlowBinDir\tensorflow\lib") -ErrorAction SilentlyContinue
+mkdir ("$tensorFlowBinDir\tensorflow\include") -ErrorAction SilentlyContinue
 
 # Installing protobuf.
-$ENV:Path+=";$TensorflowDependenciesDir\protobuf\bin\bin"
-Set-Location $TensorflowDependenciesDir
+$ENV:Path += ";$tensorflowDependenciesDir\protobuf\bin\bin"
+Set-Location $tensorflowDependenciesDir
 
-mkdir (Join-Path $TensorflowDependenciesDir protobuf) -ErrorAction SilentlyContinue
+mkdir (Join-Path $tensorflowDependenciesDir protobuf) -ErrorAction SilentlyContinue
 
 Set-Location protobuf
-$ProtobufSource = "$pwd\source"
-$ProtobufBuild = "$pwd\build"
-$ProtobufBin = "$pwd\bin"
+$protobufSource = "$pwd\source"
+$protobufBuild = "$pwd\build"
+$protobufBin = "$pwd\bin"
 
-$protobuf_tar="protobuf3.6.0.tar.gz"
+$protobuf_tar = "protobuf3.6.0.tar.gz"
 if (!(Test-Path (Join-Path $pwd $protobuf_tar))) {
-	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     Invoke-WebRequest https://github.com/google/protobuf/archive/v3.6.0.tar.gz -outfile $protobuf_tar
 }
 mkdir source -Force
 tar -xf $protobuf_tar --directory source --strip-components=1
-mkdir $ProtobufBuild -ErrorAction SilentlyContinue
-mkdir $ProtobufBin -ErrorAction SilentlyContinue
+mkdir $protobufBuild -ErrorAction SilentlyContinue
+mkdir $protobufBin -ErrorAction SilentlyContinue
 
-Set-Location $ProtobufBuild
-cmake "$ProtobufSource\cmake" -G"Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX="$ProtobufBin" -DCMAKE_BUILD_TYPE=Release -Dprotobuf_BUILD_TESTS=OFF -Dprotobuf_MODULE_COMPATIBLE=ON -Dprotobuf_MSVC_STATIC_RUNTIME=OFF
+Set-Location $protobufBuild
+cmake "$protobufSource\cmake" -G"Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX="$protobufBin" -DCMAKE_BUILD_TYPE=Release -Dprotobuf_BUILD_TESTS=OFF -Dprotobuf_MODULE_COMPATIBLE=ON -Dprotobuf_MSVC_STATIC_RUNTIME=OFF
 cmake --build . --config Release
 cmake --build . --target install --config Release
 
-Set-Location $TensorFlowBuildDir
+Set-Location $tensorFlowBuildDir
 
 # Create python environment.
 py -3 -m venv venv
@@ -143,44 +142,44 @@ pip3 install keras_preprocessing==1.0.3 --no-deps
 # Install dependencies with pacman
 pacman -S --noconfirm patch unzip
 
-Set-Location $TensorFlowSourceDir
+Set-Location $tensorFlowSourceDir
 
-# Cleaning tensorflow.
+# Cleaning
 bazel clean --expunge
-Remove-Item (Join-Path $TensorFlowSourceDir ".bazelrc") -ErrorAction SilentlyContinue
+Remove-Item (Join-Path $tensorFlowSourceDir ".bazelrc") -ErrorAction SilentlyContinue
 
-# Configure tensorflow.
-$ENV:PYTHON_BIN_PATH="$VenvDir/Scripts/python.exe" -replace '[\\]', '/'
-$ENV:PYTHON_LIB_PATH="$VenvDir/lib/site-packages" -replace '[\\]', '/'
+# Configure
+$ENV:PYTHON_BIN_PATH = "$VenvDir/Scripts/python.exe" -replace '[\\]', '/'
+$ENV:PYTHON_LIB_PATH = "$VenvDir/lib/site-packages" -replace '[\\]', '/'
 
 py configure.py
 
 # Build
 bazel build --config=opt --config=cuda --define=no_tensorflow_py_deps=true --copt=-nvcc_options=disable-warnings //tensorflow:libtensorflow_cc.so --verbose_failures
 
-Remove-Item $TensorFlowBinDir -ErrorAction SilentlyContinue -Force -Recurse
-mkdir $TensorFlowBinDir
+Remove-Item $tensorFlowBinDir -ErrorAction SilentlyContinue -Force -Recurse
+mkdir $tensorFlowBinDir
 
-# Install tensorflow and its dependencies to bin.
+# Install Tensorflow and its dependencies to bin.
 # Tensorflow lib and includes
-mkdir $TensorFlowBinDir\tensorflow\lib\ -ErrorAction SilentlyContinue
-Copy-Item  $TensorFlowSourceDir\bazel-bin\tensorflow\libtensorflow_cc.so $TensorFlowBinDir\tensorflow\lib\tensorflow_cc.dll
-Copy-Item  $TensorFlowSourceDir\bazel-bin\tensorflow\liblibtensorflow_cc.so.ifso $TensorFlowBinDir\tensorflow\lib\tensorflow_cc.lib
+mkdir $tensorFlowBinDir\tensorflow\lib\ -ErrorAction SilentlyContinue
+Copy-Item  $tensorFlowSourceDir\bazel-bin\tensorflow\libtensorflow_cc.so $tensorFlowBinDir\tensorflow\lib\tensorflow_cc.dll
+Copy-Item  $tensorFlowSourceDir\bazel-bin\tensorflow\liblibtensorflow_cc.so.ifso $tensorFlowBinDir\tensorflow\lib\tensorflow_cc.lib
 
-Copy-Item $TensorFlowSourceDir\tensorflow\core $TensorFlowBinDir\tensorflow\include\tensorflow\core -Recurse -Container  -Filter "*.h"
-Copy-Item $TensorFlowSourceDir\tensorflow\cc $TensorFlowBinDir\tensorflow\include\tensorflow\cc -Recurse -Container -Filter "*.h"
+Copy-Item $tensorFlowSourceDir\tensorflow\core $tensorFlowBinDir\tensorflow\include\tensorflow\core -Recurse -Container  -Filter "*.h"
+Copy-Item $tensorFlowSourceDir\tensorflow\cc $tensorFlowBinDir\tensorflow\include\tensorflow\cc -Recurse -Container -Filter "*.h"
 
-Copy-Item $TensorFlowSourceDir\bazel-genfiles\tensorflow\core\ $TensorFlowBinDir\tensorflow\include_pb\tensorflow\core -Recurse -Container -Filter "*.h"
-Copy-Item $TensorFlowSourceDir\bazel-genfiles\tensorflow\cc $TensorFlowBinDir\tensorflow\include_pb\tensorflow\cc -Recurse -Container -Filter "*.h"
+Copy-Item $tensorFlowSourceDir\bazel-genfiles\tensorflow\core\ $tensorFlowBinDir\tensorflow\include_pb\tensorflow\core -Recurse -Container -Filter "*.h"
+Copy-Item $tensorFlowSourceDir\bazel-genfiles\tensorflow\cc $tensorFlowBinDir\tensorflow\include_pb\tensorflow\cc -Recurse -Container -Filter "*.h"
 
 # Protobuf lib, bin and includes.
-Get-ChildItem $TensorFlowBuildDir\deps\protobuf\bin -Directory | Copy-Item -Destination $TensorFlowBinDir\protobuf -Recurse -Container
-mkdir $TensorFlowBinDir\protobuf\bin\ -ErrorAction SilentlyContinue
-Move-Item $TensorFlowBinDir\protobuf\protoc.exe $TensorFlowBinDir\protobuf\bin\protoc.exe -ErrorAction SilentlyContinue
+Get-ChildItem $tensorFlowBuildDir\deps\protobuf\bin -Directory | Copy-Item -Destination $tensorFlowBinDir\protobuf -Recurse -Container
+mkdir $tensorFlowBinDir\protobuf\bin\ -ErrorAction SilentlyContinue
+Move-Item $tensorFlowBinDir\protobuf\protoc.exe $tensorFlowBinDir\protobuf\bin\protoc.exe -ErrorAction SilentlyContinue
 
 # Absl includes.
-Copy-Item $TensorFlowSourceDir\bazel-source\external\com_google_absl\absl $TensorFlowBinDir\absl\include\absl\ -Recurse -Container -Filter "*.h" 
+Copy-Item $tensorFlowSourceDir\bazel-source\external\com_google_absl\absl $tensorFlowBinDir\absl\include\absl\ -Recurse -Container -Filter "*.h" 
 
 # Eigen includes
-Copy-Item $TensorFlowSourceDir\bazel-source\external\eigen_archive\ $TensorFlowBinDir\Eigen\eigen_archive -Recurse
-Copy-Item $TensorFlowSourceDir\third_party\eigen3 $TensorFlowBinDir\Eigen\include\third_party\eigen3\ -Recurse
+Copy-Item $tensorFlowSourceDir\bazel-source\external\eigen_archive\ $tensorFlowBinDir\Eigen\eigen_archive -Recurse
+Copy-Item $tensorFlowSourceDir\third_party\eigen3 $tensorFlowBinDir\Eigen\include\third_party\eigen3\ -Recurse
