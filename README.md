@@ -56,7 +56,7 @@ Building Tensorflow on Windows is really a tough thing and there should be many 
 
 ## Acknowledgements
 
-* My script is based on the work of [Steroes](https://github.com/Steroes).
+* My script is based on [Steroes](https://github.com/Steroes)'s work.
 * My solution to build C++ API library is based on [gittyupagain](https://github.com/gittyupagain).
 
 ## References
@@ -79,3 +79,5 @@ These are what I have referenced during contributing to this repo. They are prob
 - [x] Add support for building PyPI wheels and C API.
 - [ ] Add support for other versions of Tensorflow.
 - [x] Check if a **specific** version of dependency is installed and give a warning if another version of it is installed.
+- [ ] Refactor the structure of script.
+- [ ] Change how to process the output files.
