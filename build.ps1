@@ -136,7 +136,6 @@ $sourceDir = "$rootDir\source"
 $venvDir = "$rootDir\venv"
 
 mkdir $dependenciesDir | Out-Null
-mkdir $venvDir | Out-Null
 
 # Installing protobuf.
 if ($BuildCppProtoBuf) {
@@ -170,6 +169,7 @@ if ($BuildCppProtoBuf) {
 
 # Create python environment.
 if (! $ReserveVenv) {
+    mkdir $venvDir
     py -3 -m venv venv
     .\venv\Scripts\Activate.ps1
     pip3 install six numpy wheel
