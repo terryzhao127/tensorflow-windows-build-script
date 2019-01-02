@@ -63,10 +63,9 @@ You may need to do some preparations below:
 
 ```powershell
 # It is an example for building C++ API with GPU support.
+$parameterString = "--config=opt --config=cuda --define=no_tensorflow_py_deps=true --copt=-nvcc_options=disable-warnings //tensorflow:libtensorflow_cc.so --verbose_failures"
 .\build.ps1 `
-    -BazelBuildParameters "--config=opt --config=cuda --define=no_tensorflow_py_deps=true
-            --copt=-nvcc_options=disable-warnings //tensorflow:libtensorflow_cc.so
-            --verbose_failures" `
+    -BazelBuildParameters $parameterString `
     -BuildCppAPI -BuildCppProtoBuf -ReserveSource -ReserveVenv
 ```
 
