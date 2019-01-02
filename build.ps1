@@ -197,6 +197,9 @@ py configure.py
 # Build
 Invoke-Expression ("bazel build " + $BazelBuildParameters)
 
+# Shutdown Bazel
+bazel shutdown
+
 if ($BuildCppAPI) {
     # Move Tensorflow C++ library and its dependencies to bin.
 
