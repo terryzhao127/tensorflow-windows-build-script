@@ -7,7 +7,9 @@ param (
 
     [switch]$BuildCppAPI = $false,
     [switch]$BuildCppProtoBuf = $false,
-    [switch]$ReserveSource = $false
+    [switch]$ReserveSource = $false,
+    [switch]$ReserveVenv = $false,
+    [switch]$IgnoreDepsVersionIssues = $false
 )
 
 # Set parameters for execution.
@@ -16,8 +18,10 @@ $ErrorActionPreference = "Stop"
 
 # Cleaning Work
 Remove-Item tensorflow -ErrorAction SilentlyContinue -Force -Recurse
-Remove-Item build -ErrorAction SilentlyContinue -Force -Recurse
-Remove-Item bin -ErrorAction SilentlyContinue -Force -Recurse
+Remove-Item deps -ErrorAction SilentlyContinue -Force -Recurse
+if (! $ReserveVenv) {
+    Remove-Item venv -ErrorAction SilentlyContinue -Force -Recurse
+}
 if (! $ReserveSource) {
     Remove-Item source -ErrorAction SilentlyContinue -Force -Recurse
 }
@@ -54,7 +58,7 @@ function CheckInstalled {
         return $false
     } else {
         Write-Host "Found $ExeName installed." -ForegroundColor Green
-        if ([string]::Empty -ne $RequiredVersion) {
+        if ([string]::Empty -ne $RequiredVersion -and $true -ne $IgnoreDepsVersionIssues) {
             Write-Host $("But we've only tested with $ExeName $RequiredVersion. " +
                 "Make sure you have installed one with the same version.") -ForegroundColor Yellow
             $confirmation = Read-Host "Are you sure you want to PROCEED? [y/n]"
@@ -73,7 +77,7 @@ if (!(CheckInstalled chocolatey)) {
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 }
 
-choco feature enable -n allowGlobalConfirmation # Enable global confirmation for chocolatey package installation.
+choco feature enable -n allowGlobalConfirmation | Out-Null # Enable global confirmation for chocolatey package installation.
 
 $ENV:Path += ";C:\msys64\usr\bin"
 $ENV:Path += ";C:\Program Files\CMake\bin"
@@ -126,29 +130,20 @@ if (! $ReserveSource) {
 }
 
 # Setup folder structure.
-mkdir build
-Set-Location build
+$rootDir = $pwd
+$dependenciesDir = "$rootDir\deps"
+$sourceDir = "$rootDir\source"
+$venvDir = "$rootDir\venv"
 
-$tensorFlowBuildDir = $pwd
-$tensorflowDir = $tensorFlowBuildDir | Split-Path
-$tensorflowDependenciesDir = "$tensorFlowBuildDir\deps"
-$tensorFlowSourceDir = "$tensorflowDir\source"
-$tensorFlowBinDir = "$tensorflowDir\bin"
-$venvDir = "$tensorFlowBuildDir\venv"
-
-mkdir $tensorflowDependenciesDir
-mkdir $tensorflowBinDir
-mkdir $venvDir
-
-mkdir "$tensorFlowBinDir\tensorflow\lib"
-mkdir "$tensorFlowBinDir\tensorflow\include"
+mkdir $dependenciesDir | Out-Null
+mkdir $venvDir | Out-Null
 
 # Installing protobuf.
 if ($BuildCppProtoBuf) {
-    $ENV:Path += ";$tensorflowDependenciesDir\protobuf\bin\bin"
-    Set-Location $tensorflowDependenciesDir
+    #    $ENV:Path += ";$dependenciesDir\protobuf\bin\bin"
+    Set-Location $dependenciesDir
 
-    mkdir (Join-Path $tensorflowDependenciesDir protobuf)
+    mkdir (Join-Path $dependenciesDir protobuf) | Out-Null
 
     Set-Location protobuf
     $protobufSource = "$pwd\source"
@@ -159,10 +154,10 @@ if ($BuildCppProtoBuf) {
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     Invoke-WebRequest "https://github.com/google/protobuf/archive/v3.6.0.tar.gz" -outfile $protobuf_tar
 
-    mkdir source
+    mkdir source | Out-Null
     tar -xf $protobuf_tar --directory source --strip-components=1
-    mkdir $protobufBuild
-    mkdir $protobufBin
+    mkdir $protobufBuild | Out-Null
+    mkdir $protobufBin | Out-Null
 
     Set-Location $protobufBuild
     cmake "$protobufSource\cmake" -G"Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX="$protobufBin" -DCMAKE_BUILD_TYPE=Release `
@@ -170,22 +165,24 @@ if ($BuildCppProtoBuf) {
     cmake --build . --config Release
     cmake --build . --target install --config Release
 
-    Set-Location $tensorFlowBuildDir
+    Set-Location $rootDir
 }
 
 # Create python environment.
-py -3 -m venv venv
-.\venv\Scripts\Activate.ps1
-pip3 install six numpy wheel
-pip3 install keras_applications==1.0.5 --no-deps
-pip3 install keras_preprocessing==1.0.3 --no-deps
+if (! $ReserveVenv) {
+    py -3 -m venv venv
+    .\venv\Scripts\Activate.ps1
+    pip3 install six numpy wheel
+    pip3 install keras_applications==1.0.5 --no-deps
+    pip3 install keras_preprocessing==1.0.3 --no-deps
+}
 
-Set-Location $tensorFlowSourceDir
+Set-Location $sourceDir
 
 if ($ReserveSource) {
     # Cleaning Bazel files.
     bazel clean --expunge
-    Remove-Item (Join-Path $tensorFlowSourceDir ".bazelrc") -ErrorAction SilentlyContinue
+    Remove-Item (Join-Path $sourceDir ".bazelrc") -ErrorAction SilentlyContinue
 }
 
 # Configure
@@ -200,32 +197,4 @@ Invoke-Expression ("bazel build " + $BazelBuildParameters)
 # Shutdown Bazel
 bazel shutdown
 
-if ($BuildCppAPI) {
-    # Move Tensorflow C++ library and its dependencies to bin.
-
-    # Tensorflow lib and includes
-    Copy-Item  $tensorFlowSourceDir\bazel-bin\tensorflow\libtensorflow_cc.so $tensorFlowBinDir\tensorflow\lib\tensorflow_cc.dll
-    Copy-Item  $tensorFlowSourceDir\bazel-bin\tensorflow\liblibtensorflow_cc.so.ifso $tensorFlowBinDir\tensorflow\lib\tensorflow_cc.lib
-
-    Copy-Item $tensorFlowSourceDir\tensorflow\core $tensorFlowBinDir\tensorflow\include\tensorflow\core -Recurse -Container  -Filter "*.h"
-    Copy-Item $tensorFlowSourceDir\tensorflow\cc $tensorFlowBinDir\tensorflow\include\tensorflow\cc -Recurse -Container -Filter "*.h"
-
-    Copy-Item $tensorFlowSourceDir\bazel-genfiles\tensorflow\core\ $tensorFlowBinDir\tensorflow\include_pb\tensorflow\core -Recurse -Container -Filter "*.h"
-    Copy-Item $tensorFlowSourceDir\bazel-genfiles\tensorflow\cc $tensorFlowBinDir\tensorflow\include_pb\tensorflow\cc -Recurse -Container -Filter "*.h"
-
-    # Absl includes
-    Copy-Item $tensorFlowSourceDir\bazel-source\external\com_google_absl\absl $tensorFlowBinDir\absl\include\absl\ -Recurse -Container -Filter "*.h" 
-
-    # Eigen includes
-    Copy-Item $tensorFlowSourceDir\bazel-source\external\eigen_archive\ $tensorFlowBinDir\Eigen\eigen_archive -Recurse
-    Copy-Item $tensorFlowSourceDir\third_party\eigen3 $tensorFlowBinDir\Eigen\include\third_party\eigen3\ -Recurse
-
-    if ($BuildCppProtoBuf) {
-        # Protobuf lib, bin and includes
-        Get-ChildItem $tensorFlowBuildDir\deps\protobuf\bin -Directory | Copy-Item -Destination $tensorFlowBinDir\protobuf -Recurse -Container
-        mkdir $tensorFlowBinDir\protobuf\bin\
-        Move-Item $tensorFlowBinDir\protobuf\protoc.exe $tensorFlowBinDir\protobuf\bin\protoc.exe -ErrorAction SilentlyContinue
-    }
-
-    Write-Host "Built files are located in 'bin' folder." -ForegroundColor Green
-}
+Set-Location $rootDir

@@ -1,4 +1,4 @@
 tensorflow/
 source/
-build/
-bin/
+venv/
+deps/
