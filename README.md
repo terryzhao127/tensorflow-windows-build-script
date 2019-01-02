@@ -83,7 +83,7 @@ These are what I have referenced during contributing to this repo. They are prob
 
 - [x] Write more documentations.
 - [x] Add support for building PyPI wheels and C API.
-- [x] Add support for other versions of Tensorflow.
+- [ ] Add support for other versions of Tensorflow.
 - [x] Check if a **specific** version of dependency is installed and give a warning if another version of it is installed.
 - [ ] Refactor the structure of script.
 - [ ] Change how to process the output files.
