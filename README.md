@@ -21,7 +21,7 @@ You may need to do some preparations below:
 1. Clone this repository or directly download it.
 1. Run the script **in the repository directory** with **administrator rights**.
     ```powershell
-    .\build.ps1 -BazelBuildParameters <parameter_string> [optional_parameter] [...]
+    .\build.ps1 -BazelBuildParameters <parameter_string> [optional_parameters]
     ```
 1. The output files should be in `bazel-*` and `deps` folder.
 
