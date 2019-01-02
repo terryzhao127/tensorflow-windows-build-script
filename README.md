@@ -10,9 +10,11 @@ Building Tensorflow on Windows is really a tough thing and there should be many 
 
 ### Prerequisites
 
-*For Buiding CPU Version:* If you build with CPU version, you need no more preparation.
+You may need to do some preparations below:
 
-*For Building GPU Version:* If you build with GPU version, you need to follow this [official guide](https://www.tensorflow.org/install/gpu) to install necessary dependencies.
+* **If you need to build GPU version,** you need to follow this [official guide](https://www.tensorflow.org/install/gpu) to install GPU support.
+
+* **If you need to build C++ API,** you should add symbols that you need into `patches\tf_exported_symbols_msvc.lds`. If you don't know what symbols you need, never mind and skip this step. When you use the built C++ API, the linker will probably give you link errors, telling what symbols you need.
 
 ### Building
 
@@ -21,7 +23,7 @@ Building Tensorflow on Windows is really a tough thing and there should be many 
     ```powershell
     .\build.ps1 -BazelBuildParameters <parameter_string> [optional_parameter] [...]
     ```
-1. The output files should be in `bin` or `bazel-*` folder.
+1. The output files should be in `bazel-*` and `deps` folder.
 
 ### Details of Parameters
 
@@ -48,12 +50,20 @@ Building Tensorflow on Windows is really a tough thing and there should be many 
 * `ReserveSource` *Optional*
 
     Denote it when you confirm that you have a **valid tensorflow repository** in `source` folder and do not want to re-clone it in the next building.
+    
+* `ReserveVenv` *Optional*
+
+    Denote it when you confirm that you have a **valid virtual environment** in `venv` folder and do not recreate one.
+
+* `IgnoreDepsVersionIssues` *Optional*
+
+    Denote it to ignore the warnings due to different versions of dependencies you have installed.
 
 ### Example
 
 ```powershell
 # It is an example for building C++ API with GPU support.
-.\build.ps1 -BazelBuildParameters "--config=opt --config=cuda --define=no_tensorflow_py_deps=true --copt=-nvcc_options=disable-warnings //tensorflow:libtensorflow_cc.so --verbose_failures" -BuildCppAPI -BuildCppProtoBuf -ReserveSource
+.\build.ps1 -BazelBuildParameters "--config=opt --config=cuda --define=no_tensorflow_py_deps=true --copt=-nvcc_options=disable-warnings //tensorflow:libtensorflow_cc.so --verbose_failures" -BuildCppAPI -BuildCppProtoBuf -ReserveSource -ReserveVenv
 ```
 
 ## Known Issues
@@ -85,7 +95,8 @@ These are what I have referenced during contributing to this repo. They are prob
 - [x] Add support for building PyPI wheels and C API.
 - [ ] Add support for other versions of Tensorflow.
 - [x] Check if a **specific** version of dependency is installed and give a warning if another version of it is installed.
-- [ ] Refactor the structure of script.
-- [ ] Change how to process the output files.
-- [ ] Denote how to solve the symbol problem in C++ API.'
-- [ ] Let user choose which version of dependencies to install.
+- [x] Refactor the structure of script.
+- [x] Change how to process the output files.
+- [x] Denote how to solve the symbol problem in C++ API.
+- [ ] Let user choose what versions of dependencies to install.
+- [ ] Write a wiki about details of patches.
