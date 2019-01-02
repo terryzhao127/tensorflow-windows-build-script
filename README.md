@@ -2,9 +2,9 @@
 
 Building Tensorflow on Windows is really a tough thing and there should be many problems to solve. Thus, this script automates the process of building on Windows, which does the following things for you:
 
- * Installation of Dependencies
- * Management of Environment Variables
- * Patching
+* Installation of Dependencies
+* Management of Environment Variables
+* Patching
 
 ## Getting Started
 
@@ -36,7 +36,7 @@ You may need to do some preparations below:
     If you want to build a C API, you need `//tensorflow:libtensorflow.so`.
 
     If you want to build a C++ API, you need `//tensorflow:libtensorflow_cc.so`.
-    
+
     *For more information, click [here](https://www.tensorflow.org/install/source_windows#build_the_pip_package)*.
 
 * `-BuildCppAPI` *Optional*
@@ -45,12 +45,12 @@ You may need to do some preparations below:
 
 * `-BuildCppProtoBuf` *Optional*
 
-    Denote it to build Protocol Buffer.
+    Denote it to build Protocol Buffer when building C++ API.
 
 * `-ReserveSource` *Optional*
 
     Denote it when you confirm that you have a **valid tensorflow repository** in `source` folder and do not want to re-clone it in the next building.
-    
+
 * `-ReserveVenv` *Optional*
 
     Denote it when you confirm that you have a **valid virtual environment** in `venv` folder and do not recreate one.
