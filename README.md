@@ -1,6 +1,10 @@
 # Tensorflow Windows Build Script
 
-Building Tensorflow on Windows is really a tough thing and there should be many problems to solve. Thus, this script automates the process of building on Windows and helps you solve some problems.
+Building Tensorflow on Windows is really a tough thing and there should be many problems to solve. Thus, this script automates the process of building on Windows, which does the following things for you:
+
+ * Installation of Dependencies
+ * Management of Environment Variables
+ * Patching
 
 ## Getting Started
 
@@ -8,7 +12,7 @@ Building Tensorflow on Windows is really a tough thing and there should be many 
 
 *For Buiding CPU Version:* If you build with CPU version, you need no more preparation.
 
-*For Building GPU Version:* If you build with GPU version, you need follow this [official guide](https://www.tensorflow.org/install/gpu).
+*For Building GPU Version:* If you build with GPU version, you need to follow this [official guide](https://www.tensorflow.org/install/gpu) to install necessary dependencies.
 
 ### Building
 
@@ -23,13 +27,15 @@ Building Tensorflow on Windows is really a tough thing and there should be many 
 
 * `-BazelBuildParameters <string>` *Mandotory*
 
-    A string which is passed to Bazel to build Tensorflow. You can find something about it [here](https://www.tensorflow.org/install/source_windows#build_the_pip_package).
+    A string which is passed to Bazel to build Tensorflow.
 
     If you want to build a PyPI wheel, you need `//tensorflow/tools/pip_package:build_pip_package`.
 
     If you want to build a C API, you need `//tensorflow:libtensorflow.so`.
 
     If you want to build a C++ API, you need `//tensorflow:libtensorflow_cc.so`.
+    
+    *For more information, click [here](https://www.tensorflow.org/install/source_windows#build_the_pip_package)*.
 
 * `BuildCppAPI` *Optional*
 
@@ -37,11 +43,11 @@ Building Tensorflow on Windows is really a tough thing and there should be many 
 
 * `BuildCppProtoBuf` *Optional*
 
-    Denote it when you need Protocol Buffer when using C++ API.
+    Denote it to build Protocol Buffer.
 
 * `ReserveSource` *Optional*
 
-    Denote it when you confirm that you have a valid tensorflow repository in `source` folder and do not want to re-clone it in next building.
+    Denote it when you confirm that you have a **valid tensorflow repository** in `source` folder and do not want to re-clone it in the next building.
 
 ### Example
 
@@ -81,4 +87,5 @@ These are what I have referenced during contributing to this repo. They are prob
 - [x] Check if a **specific** version of dependency is installed and give a warning if another version of it is installed.
 - [ ] Refactor the structure of script.
 - [ ] Change how to process the output files.
-- [ ] Denote how to solve the symbol problem in C++ API.
+- [ ] Denote how to solve the symbol problem in C++ API.'
+- [ ] Let user choose which version of dependencies to install.
