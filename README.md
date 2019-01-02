@@ -39,23 +39,23 @@ You may need to do some preparations below:
     
     *For more information, click [here](https://www.tensorflow.org/install/source_windows#build_the_pip_package)*.
 
-* `BuildCppAPI` *Optional*
+* `-BuildCppAPI` *Optional*
 
     This is needed when buiding C++ API.
 
-* `BuildCppProtoBuf` *Optional*
+* `-BuildCppProtoBuf` *Optional*
 
     Denote it to build Protocol Buffer.
 
-* `ReserveSource` *Optional*
+* `-ReserveSource` *Optional*
 
     Denote it when you confirm that you have a **valid tensorflow repository** in `source` folder and do not want to re-clone it in the next building.
     
-* `ReserveVenv` *Optional*
+* `-ReserveVenv` *Optional*
 
     Denote it when you confirm that you have a **valid virtual environment** in `venv` folder and do not recreate one.
 
-* `IgnoreDepsVersionIssues` *Optional*
+* `-IgnoreDepsVersionIssues` *Optional*
 
     Denote it to ignore the warnings due to different versions of dependencies you have installed.
 
