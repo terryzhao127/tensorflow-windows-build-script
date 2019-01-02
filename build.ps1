@@ -9,7 +9,8 @@ param (
     [switch]$BuildCppProtoBuf = $false,
     [switch]$ReserveSource = $false,
     [switch]$ReserveVenv = $false,
-    [switch]$IgnoreDepsVersionIssues = $false
+    [switch]$IgnoreDepsVersionIssues = $false,
+    [switch]$InstallDefaultDeps = $false
 )
 
 # Set parameters for execution.
@@ -54,13 +55,12 @@ function CheckInstalled {
     )
     $installed = Get-Command $ExeName -All -ErrorAction SilentlyContinue
     if ($null -eq ($installed)) {
-        Write-Host "Unable to find $ExeName in your PATH" -ForegroundColor Red
+        Write-Host "Unable to find $ExeName." -ForegroundColor Red
         return $false
     } else {
         Write-Host "Found $ExeName installed." -ForegroundColor Green
         if ([string]::Empty -ne $RequiredVersion -and $true -ne $IgnoreDepsVersionIssues) {
-            Write-Host $("But we've only tested with $ExeName $RequiredVersion. " +
-                "Make sure you have installed one with the same version.") -ForegroundColor Yellow
+            Write-Host $("But we've only tested with $ExeName $RequiredVersion.") -ForegroundColor Yellow
             $confirmation = Read-Host "Are you sure you want to PROCEED? [y/n]"
             while ($confirmation -ne "y") {
                 if ($confirmation -eq 'n') {exit}
@@ -69,6 +69,20 @@ function CheckInstalled {
         }
         return $true
     }
+}
+
+function askForVersion {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$DefaultVersion
+    )
+
+    if ($InstallDefaultDeps) {
+        return $DefaultVersion
+    }
+
+    $version = Read-Host "Which version would you like to install? [Default version: $DefaultVersion]"
+    return $version
 }
 
 if (!(CheckInstalled chocolatey)) {
@@ -84,25 +98,29 @@ $ENV:Path += ";C:\Program Files\CMake\bin"
 $ENV:BAZEL_SH = "C:\msys64\usr\bin\bash.exe"
 
 if (!(CheckInstalled pacman)) {
-    choco install msys2 --version 20180531.0.0 --params "/NoUpdate /InstallDir:C:\msys64"
+    $version = askForVersion "20180531.0.0"
+    choco install msys2 --version $version --params "/NoUpdate /InstallDir:C:\msys64"
     pacman -S --noconfirm patch unzip
 }
 
 if (!(CheckInstalled bazel "0.15.0")) {
     # Bazel will also install msys2, but with an incorrect version, so we will ignore the dependencies.
-    choco install bazel --version 0.15.0 --ignore-dependencies
+    $version = askForVersion "0.15.0"
+    choco install bazel --version $version --ignore-dependencies
 }
 
 if (!(CheckInstalled cmake "3.12")) {
-    choco install cmake --version 3.12
+    $version = askForVersion "3.12"
+    choco install cmake --version $version
 }
 
 if (!(CheckInstalled git)) {
     choco install git
 }
 
-if (!(CheckInstalled python 3.6.7)) {
-    choco install python --version 3.6.7 --params "'TARGETDIR:C:/Python36'"
+if (!(CheckInstalled python "3.6.7")) {
+    $version = askForVersion "3.6.7"
+    choco install python --version $version --params "'TARGETDIR:C:/Python36'"
 }
 
 # Get the source code of Tensorflow and apply patches.
