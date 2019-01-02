@@ -87,4 +87,5 @@ These are what I have referenced during contributing to this repo. They are prob
 - [x] Check if a **specific** version of dependency is installed and give a warning if another version of it is installed.
 - [ ] Refactor the structure of script.
 - [ ] Change how to process the output files.
-- [ ] Denote how to solve the symbol problem in C++ API.
+- [ ] Denote how to solve the symbol problem in C++ API.'
+- [ ] Let user choose which version of dependencies to install.
