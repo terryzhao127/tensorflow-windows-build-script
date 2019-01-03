@@ -143,7 +143,7 @@ if (! $ReserveSource) {
     Rename-Item tensorflow source
 } else {
     Set-Location source
-    git checkout tags/$buildVersion
+    git checkout -f tags/$buildVersion
     Set-Location ..
 }
 
