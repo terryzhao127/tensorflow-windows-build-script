@@ -85,7 +85,7 @@ function askForVersion {
     return $version
 }
 
-if (!(CheckInstalled chocolatey)) {
+if (! (CheckInstalled chocolatey)) {
     Write-Host "Installing Chocolatey package manager."
     Set-ExecutionPolicy Bypass -Scope Process -Force
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -97,28 +97,28 @@ $ENV:Path += ";C:\msys64\usr\bin"
 $ENV:Path += ";C:\Program Files\CMake\bin"
 $ENV:BAZEL_SH = "C:\msys64\usr\bin\bash.exe"
 
-if (!(CheckInstalled pacman)) {
+if (! (CheckInstalled pacman)) {
     $version = askForVersion "20180531.0.0"
     choco install msys2 --version $version --params "/NoUpdate /InstallDir:C:\msys64"
     pacman -S --noconfirm patch unzip
 }
 
-if (!(CheckInstalled bazel "0.15.0")) {
+if (! (CheckInstalled bazel "0.15.0")) {
     # Bazel will also install msys2, but with an incorrect version, so we will ignore the dependencies.
     $version = askForVersion "0.15.0"
     choco install bazel --version $version --ignore-dependencies
 }
 
-if (!(CheckInstalled cmake "3.12")) {
+if (! (CheckInstalled cmake "3.12")) {
     $version = askForVersion "3.12"
     choco install cmake --version $version
 }
 
-if (!(CheckInstalled git)) {
+if (! (CheckInstalled git)) {
     choco install git
 }
 
-if (!(CheckInstalled python "3.6.7")) {
+if (! (CheckInstalled python "3.6.7")) {
     $version = askForVersion "3.6.7"
     choco install python --version $version --params "'TARGETDIR:C:/Python36'"
 }
