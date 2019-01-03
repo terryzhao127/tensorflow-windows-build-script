@@ -143,7 +143,6 @@ if ($BuildCppAPI) {
 
 Set-Location ..
 
-
 # Setup folder structure.
 $rootDir = $pwd
 $dependenciesDir = "$rootDir\deps"
