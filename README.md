@@ -94,12 +94,17 @@ These are what I have referenced during contributing to this repo. They are prob
 
 ## TODO
 
-- [x] Write more documentations.
-- [x] Add support for building PyPI wheels and C API.
 - [ ] Add support for other versions of Tensorflow.
+- [ ] Write a wiki about details of patches.
+- [ ] Read parameters from a JSON file for Bazel configure process.
+
+<details>
+  <summary>Done</summary>
+  
 - [x] Check if a **specific** version of dependency is installed and give a warning if another version of it is installed.
 - [x] Refactor the structure of script.
 - [x] Change how to process the output files.
 - [x] Denote how to solve the symbol problem in C++ API.
 - [x] Let user choose what versions of dependencies to install.
-- [ ] Write a wiki about details of patches.
+
+</details>
