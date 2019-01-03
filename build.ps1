@@ -123,29 +123,24 @@ if (!(CheckInstalled python "3.6.7")) {
     choco install python --version $version --params "'TARGETDIR:C:/Python36'"
 }
 
-# Get the source code of Tensorflow and apply patches.
+# Get the source code of Tensorflow and checkout to the specific version.
 if (! $ReserveSource) {
     git clone https://github.com/tensorflow/tensorflow.git
-    Set-Location tensorflow
-    git checkout tags/$buildVersion
-
-    if ($BuildCppAPI) {
-        # C++ Symbol Patch
-        git apply --ignore-space-change --ignore-white ..\patches\cpp_symbol.patch
-        Copy-Item ..\patches\tf_exported_symbols_msvc.lds tensorflow\
-    }
-
-    # Eigen Patch
-    git apply --ignore-space-change --ignore-white ..\patches\eigen_build.patch
-    Copy-Item ..\patches\eigen.patch third_party\
-
-    Set-Location ..
     Rename-Item tensorflow source
-} else {
-    Set-Location source
-    git checkout -f tags/$buildVersion
-    Set-Location ..
 }
+Set-Location source
+git checkout -f tags/$buildVersion
+
+# Apply patches to source.
+git apply --ignore-space-change --ignore-white ..\patches\eigen_build.patch # Eigen Patch
+Copy-Item ..\patches\eigen.patch third_party\
+
+if ($BuildCppAPI) {
+    # C++ Symbol Patch
+    git apply --ignore-space-change --ignore-white ..\patches\cpp_symbol.patch
+    Copy-Item ..\patches\tf_exported_symbols_msvc.lds tensorflow\
+}
+
 
 # Setup folder structure.
 $rootDir = $pwd
