@@ -100,7 +100,7 @@ $ENV:BAZEL_SH = "C:\msys64\usr\bin\bash.exe"
 if (!(CheckInstalled pacman)) {
     $version = askForVersion "20180531.0.0"
     choco install msys2 --version $version --params "/NoUpdate /InstallDir:C:\msys64"
-    pacman -S --noconfirm patch unzip
+    pacman -S --noconfirm patch unzip tar
 }
 
 if (!(CheckInstalled bazel "0.15.0")) {
