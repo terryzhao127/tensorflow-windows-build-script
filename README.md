@@ -23,7 +23,7 @@ You may need to do some preparations below:
     ```powershell
     .\build.ps1 -BazelBuildParameters <parameter_string> [optional_parameters]
     ```
-1. The output files should be in `bazel-*` and `deps` folder.
+1. The output files should be in `bazel-bin` and `deps` folder.
 
 ### Details of Parameters
 
