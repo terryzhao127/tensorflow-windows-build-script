@@ -59,6 +59,10 @@ You may need to do some preparations below:
 
     Denote it to ignore the warnings due to different versions of dependencies you have installed.
 
+* `-InstallDefaultDeps` *Optional*
+
+    Install default version of dependencies if not installed.
+
 ### Example
 
 ```powershell
