@@ -39,7 +39,7 @@ $options[$options.Count - 1] = [System.Management.Automation.Host.ChoiceDescript
 $title = "Select a Tensorflow version:"
 $chosenIndex = $Host.UI.PromptForChoice($title, "", $options, 0)
 
-if ($chosenIndex -eq $supportedVersions.Count) {
+if ($supportedVersions.Count -eq $chosenIndex) {
     $buildVersion = Read-Host "Please input the version tag (e.g. v1.11.0)"
 } else {
     $buildVersion = $supportedVersions[$chosenIndex]
@@ -54,7 +54,7 @@ function CheckInstalled {
         [string]$RequiredVersion
     )
     $installed = Get-Command $ExeName -All -ErrorAction SilentlyContinue
-    if ($null -eq ($installed)) {
+    if ($null -eq $installed) {
         Write-Host "Unable to find $ExeName." -ForegroundColor Red
         return $false
     } else {
@@ -63,7 +63,7 @@ function CheckInstalled {
             Write-Host $("But we've only tested with $ExeName $RequiredVersion.") -ForegroundColor Yellow
             $confirmation = Read-Host "Are you sure you want to PROCEED? [y/n]"
             while ($confirmation -ne "y") {
-                if ($confirmation -eq 'n') {exit}
+                if ($confirmation -eq "n") {exit}
                 $confirmation = Read-Host "Are you sure you want to PROCEED? [y/n]"
             }
         }
@@ -82,13 +82,16 @@ function askForVersion {
     }
 
     $version = Read-Host "Which version would you like to install? [Default version: $DefaultVersion]"
+    if ($version -eq "") {
+        return $DefaultVersion
+    }
     return $version
 }
 
 if (! (CheckInstalled chocolatey)) {
     Write-Host "Installing Chocolatey package manager."
     Set-ExecutionPolicy Bypass -Scope Process -Force
-    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString("https://chocolatey.org/install.ps1"))
 }
 
 choco feature enable -n allowGlobalConfirmation | Out-Null # Enable global confirmation for chocolatey package installation.
@@ -204,8 +207,8 @@ if ($ReserveSource) {
 }
 
 # Configure
-$ENV:PYTHON_BIN_PATH = "$VenvDir/Scripts/python.exe" -replace '[\\]', '/'
-$ENV:PYTHON_LIB_PATH = "$VenvDir/lib/site-packages" -replace '[\\]', '/'
+$ENV:PYTHON_BIN_PATH = "$VenvDir/Scripts/python.exe" -replace "[\\]", "/"
+$ENV:PYTHON_LIB_PATH = "$VenvDir/lib/site-packages" -replace "[\\]", "/"
 
 py configure.py
 
