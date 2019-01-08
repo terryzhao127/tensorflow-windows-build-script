@@ -27,7 +27,7 @@ You may need to do some preparations below:
 
 ### Details of Parameters
 
-* `-BazelBuildParameters <string>` *Mandotory*
+* `-BazelBuildParameters <string>` *Mandatory*
 
     A string which is passed to Bazel to build Tensorflow.
 
