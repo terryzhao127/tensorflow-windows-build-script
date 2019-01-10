@@ -18,13 +18,17 @@ Set-StrictMode -Version latest
 $ErrorActionPreference = "Stop"
 
 # Cleaning Work
-Remove-Item tensorflow -ErrorAction SilentlyContinue -Force -Recurse
-Remove-Item deps -ErrorAction SilentlyContinue -Force -Recurse
-if (! $ReserveVenv) {
-    Remove-Item venv -ErrorAction SilentlyContinue -Force -Recurse
+if (Test-Path tensorflow) {
+    Remove-Item tensorflow -Force -Recurse
 }
-if (! $ReserveSource) {
-    Remove-Item source -ErrorAction SilentlyContinue -Force -Recurse
+if (Test-Path deps) {
+    Remove-Item deps -Force -Recurse
+}
+if (! $ReserveVenv -and (Test-Path venv)) {
+    Remove-Item venv -Force -Recurse
+}
+if (! $ReserveSource -and (Test-Path source)) {
+    Remove-Item source -Force -Recurse
 }
 
 # Ask the specific version of Tensorflow.
@@ -53,7 +57,7 @@ function CheckInstalled {
         [Parameter(Mandatory = $false)]
         [string]$RequiredVersion
     )
-    $installed = Get-Command $ExeName -All -ErrorAction SilentlyContinue
+    $installed = Get-Command $ExeName -All
     if ($null -eq $installed) {
         Write-Host "Unable to find $ExeName." -ForegroundColor Red
         return $false
@@ -203,7 +207,10 @@ Set-Location $sourceDir
 if ($ReserveSource) {
     # Cleaning Bazel files.
     bazel clean --expunge
-    Remove-Item (Join-Path $sourceDir ".bazelrc") -ErrorAction SilentlyContinue
+    $bazelSetting = Join-Path $sourceDir ".bazelrc"
+    if (Test-Path $bazelSetting) {
+        Remove-Item $bazelSetting
+    }
 }
 
 # Configure
