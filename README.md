@@ -23,11 +23,11 @@ You may need to do some preparations below:
     ```powershell
     .\build.ps1 -BazelBuildParameters <parameter_string> [optional_parameters]
     ```
-1. The output files should be in `bazel-bin` and `deps` folder.
+1. The output files should be in `source\bazel-bin` or `deps` folder.
 
 ### Details of Parameters
 
-* `-BazelBuildParameters <string>` *Mandotory*
+* `-BazelBuildParameters <string>` *Mandatory*
 
     A string which is passed to Bazel to build Tensorflow.
 

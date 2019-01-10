@@ -164,7 +164,6 @@ mkdir $dependenciesDir | Out-Null
 
 # Installing protobuf.
 if ($BuildCppProtoBuf) {
-    #    $ENV:Path += ";$dependenciesDir\protobuf\bin\bin"
     Set-Location $dependenciesDir
 
     mkdir (Join-Path $dependenciesDir protobuf) | Out-Null
