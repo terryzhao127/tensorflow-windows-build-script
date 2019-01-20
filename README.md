@@ -101,7 +101,6 @@ These are what I have referenced during contributing to this repo. They are prob
 - [ ] Pay continuous attention to [new building API on Windows](https://github.com/tensorflow/tensorflow/issues/24885).
 - [ ] Add support for other versions of Tensorflow.
 - [ ] Write a wiki about details of patches.
-- [ ] Read parameters from a JSON file for Bazel configure process.
 
 <details>
   <summary>Done</summary>
