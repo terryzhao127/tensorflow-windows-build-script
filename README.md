@@ -4,7 +4,7 @@ Building Tensorflow on Windows is really a tough thing and there should be many 
 
 * Installation of Dependencies
 * Management of Environment Variables
-* Patching *(For more information: view [wiki](https://github.com/guikarist/tensorflow-windows-build-script/wiki/patches))*
+* Patching *(For more information, view [wiki](https://github.com/guikarist/tensorflow-windows-build-script/wiki/patches).)*
 
 *This script has tested on `v1.12.0` and `v1.11.0`.*
 
