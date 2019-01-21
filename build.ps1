@@ -32,7 +32,7 @@ if (! $ReserveSource -and (Test-Path source)) {
 }
 
 # Ask the specific version of Tensorflow.
-$supportedVersions = @("v1.11.0")
+$supportedVersions = @("v1.12.0", "v1.11.0")
 $options = [Array]::CreateInstance([System.Management.Automation.Host.ChoiceDescription], $supportedVersions.Count + 1)
 for ($i = 0; $i -lt $supportedVersions.Count; $i++) {
     $options[$i] = [System.Management.Automation.Host.ChoiceDescription]::new("&$($i + 1) - $($supportedVersions[$i])",
@@ -141,15 +141,29 @@ if (! $ReserveSource) {
 }
 Set-Location source
 git checkout -f tags/$buildVersion
+git clean -fx
 
 # Apply patches to source.
-git apply --ignore-space-change --ignore-white ..\patches\eigen_build.patch # Eigen Patch
-Copy-Item ..\patches\eigen.patch third_party\
+if ($buildVersion -eq "v1.11.0") {
+    # Eigen Patch for v1.11.0
+    git apply --ignore-space-change --ignore-white "..\patches\eigen.1.11.0.patch"
+    Copy-Item ..\patches\eigen_half.patch third_party\
+} elseif ($buildVersion -eq "v1.12.0") {
+    # Eigen Patch for v1.12.0
+    git apply --ignore-space-change --ignore-white "..\patches\eigen.1.12.0.patch"
+    Copy-Item ..\patches\eigen_half.patch third_party\
+}
 
 if ($BuildCppAPI) {
-    # C++ Symbol Patch
-    git apply --ignore-space-change --ignore-white ..\patches\cpp_symbol.patch
-    Copy-Item ..\patches\tf_exported_symbols_msvc.lds tensorflow\
+    if ($buildVersion -eq "v1.11.0") {
+        # C++ Symbol Patch for v1.11.0
+        git apply --ignore-space-change --ignore-white "..\patches\cpp_symbol.1.11.0.patch"
+        Copy-Item ..\patches\tf_exported_symbols_msvc.lds tensorflow\
+    } elseif ($buildVersion -eq "v1.12.0") {
+        # C++ Symbol Patch for v1.12.0
+        git apply --ignore-space-change --ignore-white "..\patches\cpp_symbol.1.12.0.patch"
+        Copy-Item ..\patches\tf_exported_symbols_msvc.lds tensorflow\
+    }
 }
 
 Set-Location ..
@@ -160,7 +174,9 @@ $dependenciesDir = "$rootDir\deps"
 $sourceDir = "$rootDir\source"
 $venvDir = "$rootDir\venv"
 
-mkdir $dependenciesDir | Out-Null
+if ($BuildCppProtoBuf) {
+    mkdir $dependenciesDir | Out-Null
+}
 
 # Installing protobuf.
 if ($BuildCppProtoBuf) {
@@ -199,6 +215,8 @@ if (! $ReserveVenv) {
     pip3 install six numpy wheel
     pip3 install keras_applications==1.0.5 --no-deps
     pip3 install keras_preprocessing==1.0.3 --no-deps
+} else {
+    .\venv\Scripts\Activate.ps1
 }
 
 Set-Location $sourceDir
