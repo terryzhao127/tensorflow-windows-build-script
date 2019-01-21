@@ -6,6 +6,8 @@ Building Tensorflow on Windows is really a tough thing and there should be many 
 * Management of Environment Variables
 * Patching
 
+This script has tested on `v1.12.0` and `v1.11.0`.
+
 ## Getting Started
 
 ### Prerequisites
@@ -99,12 +101,12 @@ These are what I have referenced during contributing to this repo. They are prob
 ## TODO
 
 - [ ] Pay continuous attention to [new building API on Windows](https://github.com/tensorflow/tensorflow/issues/24885).
-- [ ] Add support for other versions of Tensorflow.
 - [ ] Write a wiki about details of patches.
 
 <details>
   <summary>Done</summary>
   
+- [x] Add support for other versions of Tensorflow.
 - [x] Check if a **specific** version of dependency is installed and give a warning if another version of it is installed.
 - [x] Refactor the structure of script.
 - [x] Change how to process the output files.
