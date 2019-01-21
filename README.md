@@ -4,7 +4,7 @@ Building Tensorflow on Windows is really a tough thing and there should be many 
 
 * Installation of Dependencies
 * Management of Environment Variables
-* Patching
+* Patching *(For more information: view [wiki](https://github.com/guikarist/tensorflow-windows-build-script/wiki/patches))*
 
 *This script has tested on `v1.12.0` and `v1.11.0`.*
 
@@ -88,24 +88,14 @@ $parameterString = "--config=opt --config=cuda --define=no_tensorflow_py_deps=tr
 
 These are what I have referenced during contributing to this repo. They are probably useful for you to solve some problems and even get a better idea to build.
 
-### General Build Methods
-
-* [Official Tutorial](https://www.tensorflow.org/install/source_windows)
-* [How to build and install TensorFlow GPU/CPU for Windows from source code using bazel and Python 3.6](https://medium.com/@amsokol.com/update-1-how-to-build-and-install-tensorflow-gpu-cpu-for-windows-from-source-code-using-bazel-and-c2e86fec9ef2)
-
-### For Building C++ API
-
-* [No C++ symbols exported after built libtensorflow_cc with bazel on windows](https://github.com/tensorflow/tensorflow/issues/23542)
-* [How to build and use Google TensorFlow C++ api](https://stackoverflow.com/questions/33620794/how-to-build-and-use-google-tensorflow-c-api)
-
 ## TODO
 
 - [ ] Pay continuous attention to [new building API on Windows](https://github.com/tensorflow/tensorflow/issues/24885).
-- [ ] Write a wiki about details of patches.
 
 <details>
   <summary>Done</summary>
   
+- [x] Write a wiki about details of patches.
 - [x] Add support for other versions of Tensorflow.
 - [x] Check if a **specific** version of dependency is installed and give a warning if another version of it is installed.
 - [x] Refactor the structure of script.
