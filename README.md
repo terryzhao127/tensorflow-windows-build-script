@@ -6,7 +6,7 @@ Building Tensorflow on Windows is really a tough thing and there should be many 
 * Management of Environment Variables
 * Patching
 
-This script has tested on `v1.12.0` and `v1.11.0`.
+*This script has tested on `v1.12.0` and `v1.11.0`.*
 
 ## Getting Started
 
