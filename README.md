@@ -90,6 +90,7 @@ These are what I have referenced during contributing to this repo. They are prob
 
 ## TODO
 
+- [ ] Put latest news on related topics in Wiki together.
 - [ ] Delete the API which builds protobuf.
 - [ ] Write an example to use built results.
 - [ ] Pay continuous attention to [new building API on Windows](https://github.com/tensorflow/tensorflow/issues/24885).
