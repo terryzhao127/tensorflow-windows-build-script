@@ -86,6 +86,7 @@ These are what I have referenced during contributing to this repo. They are prob
 
 ## TODO
 
+- [ ] Create template for issue.
 - [ ] Put latest news on related topics in Wiki together.
 - [ ] Write an example to use built results.
 - [ ] Pay continuous attention to [new building API on Windows](https://github.com/tensorflow/tensorflow/issues/24885).
