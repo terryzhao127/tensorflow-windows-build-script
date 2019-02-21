@@ -6,7 +6,6 @@ param (
     [string]$BazelBuildParameters,
 
     [switch]$BuildCppAPI = $false,
-    [switch]$BuildCppProtoBuf = $false,
     [switch]$ReserveSource = $false,
     [switch]$ReserveVenv = $false,
     [switch]$IgnoreDepsVersionIssues = $false,
@@ -20,9 +19,6 @@ $ErrorActionPreference = "Stop"
 # Cleaning Work
 if (Test-Path tensorflow) {
     Remove-Item tensorflow -Force -Recurse
-}
-if (Test-Path deps) {
-    Remove-Item deps -Force -Recurse
 }
 if (! $ReserveVenv -and (Test-Path venv)) {
     Remove-Item venv -Force -Recurse
@@ -111,9 +107,6 @@ if (! (CheckInstalled pacman)) {
 
 # Install tools that are necessary for buiding.
 pacman -S --noconfirm patch unzip
-if ($BuildCppProtoBuf) {
-	pacman -S --noconfirm tar
-}
 
 if (! (CheckInstalled bazel "0.15.0")) {
     # Bazel will also install msys2, but with an incorrect version, so we will ignore the dependencies.
@@ -171,42 +164,8 @@ Set-Location ..
 
 # Setup folder structure.
 $rootDir = $pwd
-$dependenciesDir = "$rootDir\deps"
 $sourceDir = "$rootDir\source"
 $venvDir = "$rootDir\venv"
-
-if ($BuildCppProtoBuf) {
-    mkdir $dependenciesDir | Out-Null
-}
-
-# Installing protobuf.
-if ($BuildCppProtoBuf) {
-    Set-Location $dependenciesDir
-
-    mkdir (Join-Path $dependenciesDir protobuf) | Out-Null
-
-    Set-Location protobuf
-    $protobufSource = "$pwd\source"
-    $protobufBuild = "$pwd\build"
-    $protobufBin = "$pwd\bin"
-
-    $protobuf_tar = "protobuf3.6.0.tar.gz"
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    Invoke-WebRequest "https://github.com/google/protobuf/archive/v3.6.0.tar.gz" -outfile $protobuf_tar
-
-    mkdir source | Out-Null
-    tar -xf $protobuf_tar --directory source --strip-components=1
-    mkdir $protobufBuild | Out-Null
-    mkdir $protobufBin | Out-Null
-
-    Set-Location $protobufBuild
-    cmake "$protobufSource\cmake" -G"Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX="$protobufBin" -DCMAKE_BUILD_TYPE=Release `
-        -Dprotobuf_BUILD_TESTS=OFF -Dprotobuf_MODULE_COMPATIBLE=ON -Dprotobuf_MSVC_STATIC_RUNTIME=OFF
-    cmake --build . --config Release
-    cmake --build . --target install --config Release
-
-    Set-Location $rootDir
-}
 
 # Create python environment.
 if (! $ReserveVenv) {

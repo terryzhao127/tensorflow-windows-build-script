@@ -25,7 +25,7 @@ You may need to do some preparations below:
     ```powershell
     .\build.ps1 -BazelBuildParameters <parameter_string> [optional_parameters]
     ```
-1. The output files should be in `source\bazel-bin` or `deps` folder.
+1. The output files should be in `source\bazel-bin` folder.
 
 ### Details of Parameters
 
@@ -44,10 +44,6 @@ You may need to do some preparations below:
 * `-BuildCppAPI` *Optional*
 
     This is needed when buiding C++ API.
-
-* `-BuildCppProtoBuf` *Optional*
-
-    Denote it to build Protocol Buffer when building C++ API.
 
 * `-ReserveSource` *Optional*
 
@@ -72,7 +68,7 @@ You may need to do some preparations below:
 $parameterString = "--config=opt --config=cuda --define=no_tensorflow_py_deps=true --copt=-nvcc_options=disable-warnings //tensorflow:libtensorflow_cc.so --verbose_failures"
 .\build.ps1 `
     -BazelBuildParameters $parameterString `
-    -BuildCppAPI -BuildCppProtoBuf -ReserveSource -ReserveVenv
+    -BuildCppAPI -ReserveSource -ReserveVenv
 ```
 
 ## Known Issues
@@ -91,13 +87,13 @@ These are what I have referenced during contributing to this repo. They are prob
 ## TODO
 
 - [ ] Put latest news on related topics in Wiki together.
-- [ ] Delete the API which builds protobuf.
 - [ ] Write an example to use built results.
 - [ ] Pay continuous attention to [new building API on Windows](https://github.com/tensorflow/tensorflow/issues/24885).
 
 <details>
   <summary>Done</summary>
   
+- [x] Delete the API which builds protobuf.
 - [x] Write a wiki about details of patches.
 - [x] Add support for other versions of Tensorflow.
 - [x] Check if a **specific** version of dependency is installed and give a warning if another version of it is installed.
