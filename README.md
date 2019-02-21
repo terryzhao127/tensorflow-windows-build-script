@@ -25,7 +25,7 @@ You may need to do some preparations below:
     ```powershell
     .\build.ps1 -BazelBuildParameters <parameter_string> [optional_parameters]
     ```
-1. The output files should be in `source\bazel-bin` folder.
+1. The output files should be in `source\bazel-bin` folder. View [wiki](https://github.com/guikarist/tensorflow-windows-build-script/wiki/Using-the-built-results#building-c-library) to find some advice on how to use the built results.
 
 ### Details of Parameters
 
@@ -88,12 +88,12 @@ These are what I have referenced during contributing to this repo. They are prob
 
 - [ ] Create template for issue.
 - [ ] Put latest news on related topics in Wiki together.
-- [ ] Write an example to use built results.
 - [ ] Pay continuous attention to [new building API on Windows](https://github.com/tensorflow/tensorflow/issues/24885).
 
 <details>
   <summary>Done</summary>
-  
+
+- [x] Write an example to use built results.
 - [x] Delete the API which builds protobuf.
 - [x] Write a wiki about details of patches.
 - [x] Add support for other versions of Tensorflow.
