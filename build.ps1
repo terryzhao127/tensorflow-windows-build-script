@@ -110,8 +110,13 @@ if (! (CheckInstalled pacman)) {
     choco install msys2 --version $version --params "/NoUpdate /InstallDir:C:\msys64"
 }
 
-# Install tools that are necessary for buiding.
-pacman -S --noconfirm patch unzip
+if (! (CheckInstalled patch)) {
+    pacman -S --noconfirm patch
+}
+
+if (! (CheckInstalled unzip)) {
+    pacman -S --noconfirm unzip
+}
 
 if (! (CheckInstalled bazel "0.15.0")) {
     # Bazel will also install msys2, but with an incorrect version, so we will ignore the dependencies.
