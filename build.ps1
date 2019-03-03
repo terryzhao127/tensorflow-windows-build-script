@@ -29,18 +29,23 @@ if (! $ReserveSource -and (Test-Path source)) {
 
 # Ask the specific version of Tensorflow.
 $supportedVersions = @("v1.12.0", "v1.11.0")
-$options = [Array]::CreateInstance([System.Management.Automation.Host.ChoiceDescription], $supportedVersions.Count + 1)
+$options = [Array]::CreateInstance([System.Management.Automation.Host.ChoiceDescription], $supportedVersions.Count)
 for ($i = 0; $i -lt $supportedVersions.Count; $i++) {
     $options[$i] = [System.Management.Automation.Host.ChoiceDescription]::new("&$($i + 1) - $($supportedVersions[$i])",
         "Build Tensorflow $($supportedVersions[$i]).")
 }
-$options[$options.Count - 1] = [System.Management.Automation.Host.ChoiceDescription]::new("&Select another version",
+$options += [System.Management.Automation.Host.ChoiceDescription]::new("&Build latest version",
+    "Build master branch of Tensorflow.")
+$options += [System.Management.Automation.Host.ChoiceDescription]::new("&Select another version",
     "Input the custom version tag you want to build.")
+
 $title = "Select a Tensorflow version:"
 $chosenIndex = $Host.UI.PromptForChoice($title, "", $options, 0)
 
-if ($supportedVersions.Count -eq $chosenIndex) {
+if ($supportedVersions.Count -eq $chosenIndex + 1) {
     $buildVersion = Read-Host "Please input the version tag (e.g. v1.11.0)"
+} elseif ($supportedVersions.Count -eq $chosenIndex) {
+    $buildVersion = "latest"
 } else {
     $buildVersion = $supportedVersions[$chosenIndex]
 }
@@ -132,9 +137,16 @@ if (! (CheckInstalled python "3.6.7")) {
 if (! $ReserveSource) {
     git clone https://github.com/tensorflow/tensorflow.git
     Rename-Item tensorflow source
+    Set-Location source
+} else {
+    Set-Location source
+    git fetch
 }
-Set-Location source
-git checkout -f tags/$buildVersion
+if ($buildVersion -eq "latest") {
+    git checkout master
+} else {
+    git checkout -f tags/$buildVersion
+}
 git clean -fx
 
 # Apply patches to source.
