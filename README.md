@@ -25,7 +25,7 @@ You may need to do some preparations below:
     ```powershell
     .\build.ps1 -BazelBuildParameters <parameter_string> [optional_parameters]
     ```
-    *   **When you encounter `Make sure you have installed same version of bazel 0.19.0.`,** make sure you have installed same version of what we recommend, otherwise we advise you to uninstall your installed ones and re-run the script which will automatically install recommended ones. Or you can proceed with high possibility to get stuck in problems. After having cleared the version issues, you must be glad to add `-IgnoreDepsVersionIssues` flag next time.
+    *   **When you encounter `Make sure you have installed same version of $ExeName $RequiredVersion.`,** make sure you have installed same version of what we recommend, otherwise we advise you to uninstall your installed ones and re-run the script which will automatically install recommended ones. Or you can proceed with high possibility to get stuck in problems. After having cleared the version issues, you must be glad to add `-IgnoreDepsVersionIssues` flag next time.
     
         Considering that not every installed software is installed by [chocolatey](https://chocolatey.org/), we cannot automate the uninstallation process for you. On the other hand, if some of your installed ones are indeed choco packages, please view [chocolatey docs](https://chocolatey.org/docs/commands-uninstall) to uninstall them manually.
 1. The output files should be in `source\bazel-bin` folder. View [wiki](https://github.com/guikarist/tensorflow-windows-build-script/wiki/Using-the-built-results#building-c-library) to find some advice on how to use the built results.
