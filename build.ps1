@@ -146,10 +146,12 @@ if (! $ReserveSource) {
 } else {
     Set-Location source
     git fetch
+    git reset --hard origin/master
+    git checkout -f master
+    git pull
 }
-if ($buildVersion -eq "latest") {
-    git checkout master
-} else {
+
+if ($buildVersion -ne "latest") {
     git checkout -f tags/$buildVersion
 }
 git clean -fx
@@ -198,14 +200,14 @@ if (! $ReserveVenv) {
 
 Set-Location $sourceDir
 
-if ($ReserveSource) {
-    # Cleaning Bazel files.
-    bazel clean --expunge
-    $bazelSetting = Join-Path $sourceDir ".bazelrc"
-    if (Test-Path $bazelSetting) {
-        Remove-Item $bazelSetting
-    }
-}
+# if ($ReserveSource) {
+#     # Cleaning Bazel files.
+#     bazel clean --expunge
+#     $bazelSetting = Join-Path $sourceDir ".bazelrc"
+#     if (Test-Path $bazelSetting) {
+#         Remove-Item $bazelSetting
+#     }
+# }
 
 # Configure
 $ENV:PYTHON_BIN_PATH = "$VenvDir/Scripts/python.exe" -replace "[\\]", "/"
