@@ -65,7 +65,7 @@ function CheckInstalled {
     } else {
         Write-Host "Found $ExeName installed." -ForegroundColor Green
         if ([string]::Empty -ne $RequiredVersion -and $true -ne $IgnoreDepsVersionIssues) {
-            Write-Host $("But we've only tested with $ExeName $RequiredVersion.") -ForegroundColor Yellow
+            Write-Host $("Make sure you have installed same version of $ExeName $RequiredVersion.") -ForegroundColor Yellow
             $confirmation = Read-Host "Are you sure you want to PROCEED? [y/n]"
             while ($confirmation -ne "y") {
                 if ($confirmation -eq "n") {exit}
@@ -93,6 +93,14 @@ function askForVersion {
     return $version
 }
 
+# Assign correct version of dependencies.
+if ($buildVersion -eq "v1.11.0" -or $buildVersion -eq "v1.12.0") {
+    $bazelVersion = "0.15.0"
+} elseif ($buildVersion -eq "latest") {
+    $bazelVersion = "0.19.0"
+}
+
+# Installation of dependencies
 if (! (CheckInstalled chocolatey)) {
     Write-Host "Installing Chocolatey package manager."
     Set-ExecutionPolicy Bypass -Scope Process -Force
@@ -118,9 +126,10 @@ if (! (CheckInstalled unzip)) {
     pacman -S --noconfirm unzip
 }
 
-if (! (CheckInstalled bazel "0.15.0")) {
+if (! (CheckInstalled bazel $bazelVersion)) {
+    $version = askForVersion $bazelVersion
+
     # Bazel will also install msys2, but with an incorrect version, so we will ignore the dependencies.
-    $version = askForVersion "0.15.0"
     choco install bazel --version $version --ignore-dependencies
 }
 
@@ -203,10 +212,6 @@ Set-Location $sourceDir
 if ($ReserveSource) {
     # Cleaning Bazel files.
     bazel clean --expunge
-    $bazelSetting = Join-Path $sourceDir ".bazelrc"
-    if (Test-Path $bazelSetting) {
-        Remove-Item $bazelSetting
-    }
 }
 
 # Configure
