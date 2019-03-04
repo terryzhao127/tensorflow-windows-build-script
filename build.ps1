@@ -146,10 +146,12 @@ if (! $ReserveSource) {
 } else {
     Set-Location source
     git fetch
+    git reset --hard origin/master
+    git checkout -f master
+    git pull
 }
-if ($buildVersion -eq "latest") {
-    git checkout master
-} else {
+
+if ($buildVersion -ne "latest") {
     git checkout -f tags/$buildVersion
 }
 git clean -fx
