@@ -25,6 +25,7 @@ You may need to do some preparations below:
     ```powershell
     .\build.ps1 -BazelBuildParameters <parameter_string> [optional_parameters]
     ```
+    * **If you encounter version issues,** we recommend you to uninstall your installed ones and re-run the script which will automatically solve them. Or you can proceed with high possibility to get stuck in problems. If you survive, you must be glad to add `-IgnoreDepsVersionIssues` flag next time.
 1. The output files should be in `source\bazel-bin` folder. View [wiki](https://github.com/guikarist/tensorflow-windows-build-script/wiki/Using-the-built-results#building-c-library) to find some advice on how to use the built results.
 
 ### Details of Parameters
