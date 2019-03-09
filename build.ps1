@@ -20,22 +20,20 @@ $ErrorActionPreference = "Stop"
 if (Test-Path tensorflow) {
     Remove-Item tensorflow -Force -Recurse
 }
-if (! $ReserveVenv -and (Test-Path venv)) {
+if (!$ReserveVenv -and (Test-Path venv)) {
     Remove-Item venv -Force -Recurse
 }
-if (! $ReserveSource -and (Test-Path source)) {
+if (!$ReserveSource -and (Test-Path source)) {
     Remove-Item source -Force -Recurse
 }
 
 # Ask the specific version of Tensorflow.
-$supportedVersions = @("v1.12.0", "v1.11.0")
+$supportedVersions = @("v1.13.1", "v1.12.0", "v1.11.0")
 $options = [Array]::CreateInstance([System.Management.Automation.Host.ChoiceDescription], $supportedVersions.Count)
 for ($i = 0; $i -lt $supportedVersions.Count; $i++) {
     $options[$i] = [System.Management.Automation.Host.ChoiceDescription]::new("&$($i + 1) - $($supportedVersions[$i])",
         "Build Tensorflow $($supportedVersions[$i]).")
 }
-$options += [System.Management.Automation.Host.ChoiceDescription]::new("&Build latest version",
-    "Build master branch of Tensorflow.")
 $options += [System.Management.Automation.Host.ChoiceDescription]::new("&Select another version",
     "Input the custom version tag you want to build.")
 
@@ -44,8 +42,6 @@ $chosenIndex = $Host.UI.PromptForChoice($title, "", $options, 0)
 
 if ($supportedVersions.Count -eq $chosenIndex + 1) {
     $buildVersion = Read-Host "Please input the version tag (e.g. v1.11.0)"
-} elseif ($supportedVersions.Count -eq $chosenIndex) {
-    $buildVersion = "latest"
 } else {
     $buildVersion = $supportedVersions[$chosenIndex]
 }
@@ -96,12 +92,12 @@ function askForVersion {
 # Assign correct version of dependencies.
 if ($buildVersion -eq "v1.11.0" -or $buildVersion -eq "v1.12.0") {
     $bazelVersion = "0.15.0"
-} elseif ($buildVersion -eq "latest") {
-    $bazelVersion = "0.19.0"
+} elseif ($buildVersion -eq "v1.13.1") {
+    $bazelVersion = "0.20.0"
 }
 
 # Installation of dependencies
-if (! (CheckInstalled chocolatey)) {
+if (!(CheckInstalled chocolatey)) {
     Write-Host "Installing Chocolatey package manager."
     Set-ExecutionPolicy Bypass -Scope Process -Force
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString("https://chocolatey.org/install.ps1"))
@@ -113,42 +109,42 @@ $ENV:Path += ";C:\msys64\usr\bin"
 $ENV:Path += ";C:\Program Files\CMake\bin"
 $ENV:BAZEL_SH = "C:\msys64\usr\bin\bash.exe"
 
-if (! (CheckInstalled pacman)) {
+if (!(CheckInstalled pacman)) {
     $version = askForVersion "20180531.0.0"
     choco install msys2 --version $version --params "/NoUpdate /InstallDir:C:\msys64"
 }
 
-if (! (CheckInstalled patch)) {
+if (!(CheckInstalled patch)) {
     pacman -S --noconfirm patch
 }
 
-if (! (CheckInstalled unzip)) {
+if (!(CheckInstalled unzip)) {
     pacman -S --noconfirm unzip
 }
 
-if (! (CheckInstalled bazel $bazelVersion)) {
+if (!(CheckInstalled bazel $bazelVersion)) {
     $version = askForVersion $bazelVersion
 
     # Bazel will also install msys2, but with an incorrect version, so we will ignore the dependencies.
     choco install bazel --version $version --ignore-dependencies
 }
 
-if (! (CheckInstalled cmake "3.12")) {
+if (!(CheckInstalled cmake "3.12")) {
     $version = askForVersion "3.12"
     choco install cmake --version $version
 }
 
-if (! (CheckInstalled git)) {
+if (!(CheckInstalled git)) {
     choco install git
 }
 
-if (! (CheckInstalled python "3.6.7")) {
+if (!(CheckInstalled python "3.6.7")) {
     $version = askForVersion "3.6.7"
     choco install python --version $version --params "'TARGETDIR:C:/Python36'"
 }
 
 # Get the source code of Tensorflow and checkout to the specific version.
-if (! $ReserveSource) {
+if (!$ReserveSource) {
     git clone https://github.com/tensorflow/tensorflow.git
     Rename-Item tensorflow source
     Set-Location source
@@ -160,9 +156,7 @@ if (! $ReserveSource) {
     git pull
 }
 
-if ($buildVersion -ne "latest") {
-    git checkout -f tags/$buildVersion
-}
+git checkout -f tags/$buildVersion
 git clean -fx
 
 # Apply patches to source.
@@ -196,7 +190,7 @@ $sourceDir = "$rootDir\source"
 $venvDir = "$rootDir\venv"
 
 # Create python environment.
-if (! $ReserveVenv) {
+if (!$ReserveVenv) {
     mkdir $venvDir | Out-Null
     py -3 -m venv venv
     .\venv\Scripts\Activate.ps1

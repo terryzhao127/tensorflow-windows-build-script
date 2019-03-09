@@ -1,12 +1,14 @@
 # Tensorflow Windows Build Script
 
-Building Tensorflow on Windows is really a tough thing and there should be many problems to solve. Thus, this script automates the process of building on Windows, which does the following things for you:
+Building Tensorflow on Windows is really a **tough** thing and there should be many problems to solve. Thus, this script automates the process of building on Windows, which does the following things for you:
 
 * Installation of Dependencies
 * Management of Environment Variables
 * Patching *(For more information, view [wiki](https://github.com/guikarist/tensorflow-windows-build-script/wiki/patches))*
 
-*This script has tested on `v1.12.0` and `v1.11.0`.*
+*This script has been tested on `v1.13.1` (partially tested), `v1.12.0` and `v1.11.0`.*
+
+However, this script may work on several unsupported versions. If you did this and succeeded, it would be nice of you to add your configurations to the script by pull requests! Through [Bulletin Board](#bulletin-board)
 
 ## Getting Started
 
@@ -15,38 +17,39 @@ Building Tensorflow on Windows is really a tough thing and there should be many 
 You may need to do some preparations below:
 
 * **If you need to build GPU version,** you need to follow this [official guide](https://www.tensorflow.org/install/gpu) to install GPU support.
-
-* **If you need to build C++ API,** you should add symbols that you need into `patches\tf_exported_symbols_msvc.lds`. If you don't know what symbols you need, never mind and skip this step. When you use the built C++ API, the linker will probably give you link errors, telling what symbols you need.
+* **If you need to build C++ API on `v1.11.0` and `v1.12.0`,** you should add symbols that you need into `patches\tf_exported_symbols_msvc.lds`. If you don't know what symbols you need, never mind and skip this step. When you use the built C++ API, the linker will probably give you link errors, telling what symbols you need.
 
 ### Building
 
 1. Clone this repository or directly download it.
 1. Run the script **in the repository directory** with **administrator rights**.
+
     ```powershell
     .\build.ps1 -BazelBuildParameters <parameter_string> [optional_parameters]
     ```
-    *   **When you encounter `Make sure you have installed same version of $ExeName $RequiredVersion.`,** make sure you have installed same version of what we recommend, otherwise we advise you to uninstall your installed ones and re-run the script which will automatically install recommended ones. Or you can proceed with high possibility to get stuck in problems. After having cleared the version issues, you must be glad to add `-IgnoreDepsVersionIssues` flag next time.
-    
-        Considering that not every installed software is installed by [chocolatey](https://chocolatey.org/), we cannot automate the uninstallation process for you. On the other hand, if some of your installed ones are indeed choco packages, please view [chocolatey docs](https://chocolatey.org/docs/commands-uninstall) to uninstall them manually.
+
+    * **When you encounter `Make sure you have installed same version of $ExeName $RequiredVersion`,** make sure you have installed same version of what we recommend, otherwise we advise you to uninstall your installed ones and re-run the script which will automatically install recommended ones. Or you can proceed with high possibility to get stuck in problems. After having cleared the version issues, you must be glad to add `-IgnoreDepsVersionIssues` flag next time.
+
+      Considering that not every installed software is installed by [chocolatey](https://chocolatey.org/), we cannot automate the uninstallation process for you. On the other hand, if some of your installed ones are indeed choco packages, please view [chocolatey docs](https://chocolatey.org/docs/commands-uninstall) to uninstall them manually.
 1. The output files should be in `source\bazel-bin` folder. View [wiki](https://github.com/guikarist/tensorflow-windows-build-script/wiki/Using-the-built-results#building-c-library) to find some advice on how to use the built results.
 
 ### Details of Parameters
 
 * `-BazelBuildParameters <string>` *Mandatory*
 
-    A string which is passed to Bazel to build Tensorflow.
+  A string which is passed to Bazel to build Tensorflow.
 
-    If you want to build a PyPI wheel, you need `//tensorflow/tools/pip_package:build_pip_package`.
+  * If you want to build a PyPI wheel, you need `//tensorflow/tools/pip_package:build_pip_package`.
 
-    If you want to build a C API, you need `//tensorflow:libtensorflow.so`.
+  * If you want to build a C API, you need `//tensorflow:libtensorflow.so`.
 
-    If you want to build a C++ API, you need `//tensorflow:libtensorflow_cc.so`.
+  * If you want to build a C++ API, you need `//tensorflow:libtensorflow_cc.so`.
 
-    *For more information, click [here](https://www.tensorflow.org/install/source_windows#build_the_pip_package)*.
+  *For more information, click [here](https://www.tensorflow.org/install/source_windows#build_the_pip_package)*.
 
 * `-BuildCppAPI` *Optional*
 
-    This is needed when buiding C++ API.
+    This is needed when buiding C++ API of `v1.12.0` and `v1.11.0`.
 
 * `-ReserveSource` *Optional*
 
@@ -83,20 +86,23 @@ $parameterString = "--config=opt --config=cuda --define=no_tensorflow_py_deps=tr
 * My script is based on [Steroes](https://github.com/Steroes)'s work.
 * My solution to build C++ API library is based on [gittyupagain](https://github.com/gittyupagain).
 
-## References
+## Bulletin Board
 
-These are what I have referenced during contributing to this repo. They are probably useful for you to solve some problems and even get a better idea to build.
+* New C API (committed): <https://github.com/tensorflow/tensorflow/pull/24963>
+* New C++ API: <https://github.com/tensorflow/tensorflow/pull/26152>
 
 ## TODO
 
-- [ ] Try building with latest version of Tensorflow which supports building DLL.
-- [ ] Create template for issue.
-- [ ] Put latest news on related topics in Wiki together.
-- [ ] Pay continuous attention to [new building API on Windows](https://github.com/tensorflow/tensorflow/issues/24885).
+Here are some TODO items waiting for your best solutions!
+
+- [ ] Test whether C++ API of `v1.13.1` worked, whose symbol issues are not tested yet.
+- [ ] Edit the script to support new C API after (not including) `v1.13.1` which is committed in [this issue](https://github.com/tensorflow/tensorflow/pull/24963#issue-245158918).
+- [ ] Pay attention to [new C++ API](https://github.com/tensorflow/tensorflow/pull/26152).
 
 <details>
   <summary>Done</summary>
 
+- [x] Try building with latest version of Tensorflow which supports building DLL. (v1.13)
 - [x] Write an example to use built results.
 - [x] Delete the API which builds protobuf.
 - [x] Write a wiki about details of patches.
