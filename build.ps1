@@ -54,7 +54,7 @@ function CheckInstalled {
         [Parameter(Mandatory = $false)]
         [string]$RequiredVersion
     )
-    $installed = Get-Command $ExeName -All
+    $installed = Get-Command $ExeName -ErrorAction SilentlyContinue
     if ($null -eq $installed) {
         Write-Host "Unable to find $ExeName." -ForegroundColor Red
         return $false
