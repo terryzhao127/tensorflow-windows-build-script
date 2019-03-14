@@ -1,0 +1,13 @@
+diff --git a/tensorflow/core/framework/op_kernel.h b/tensorflow/core/framework/op_kernel.h
+index 19a0c5e5be..6129073909 100644
+--- a/tensorflow/core/framework/op_kernel.h
++++ b/tensorflow/core/framework/op_kernel.h
+@@ -402,7 +402,7 @@ class OpArgIterator {
+     return old_value;
+   }
+ 
+-  reference operator*() { return (*list_)[i_]; }
++  reference operator*() const { return (*list_)[i_]; }
+   pointer operator->() { return &(*list_)[i_]; }
+ 
+  private:

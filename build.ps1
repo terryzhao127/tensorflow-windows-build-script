@@ -168,6 +168,9 @@ if ($buildVersion -eq "v1.11.0") {
     # Eigen Patch for v1.12.0
     git apply --ignore-space-change --ignore-white "..\patches\eigen.1.12.0.patch"
     Copy-Item ..\patches\eigen_half.patch third_party\
+} elseif ($buildVersion -eq "v1.13.1") {
+    # VS 2017 Patch for v1.13.1
+    git apply --ignore-space-change --ignore-white "..\patches\vs2017compile.1.13.1.patch"
 }
 
 if ($BuildCppAPI) {
