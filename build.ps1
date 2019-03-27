@@ -168,6 +168,9 @@ if ($buildVersion -eq "v1.11.0") {
     # Eigen Patch for v1.12.0
     git apply --ignore-space-change --ignore-white "..\patches\eigen.1.12.0.patch"
     Copy-Item ..\patches\eigen_half.patch third_party\
+} elseif ($buildVersion -eq "v1.13.1") {
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest https://github.com/tensorflow/tensorflow/commit/ec727016282383aacf9d26386b01f6bdbd65b14b.patch | git apply -v --ignore-space-change --ignore-white
 }
 
 if ($BuildCppAPI) {
@@ -179,6 +182,9 @@ if ($BuildCppAPI) {
         # C++ Symbol Patch for v1.12.0
         git apply --ignore-space-change --ignore-white "..\patches\cpp_symbol.1.12.0.patch"
         Copy-Item ..\patches\tf_exported_symbols_msvc.lds tensorflow\
+    } elseif ($buildVersion -eq "v1.13.1") {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        Invoke-WebRequest https://github.com/tensorflow/tensorflow/commit/ec727016282383aacf9d26386b01f6bdbd65b14b.patch | git apply -v --ignore-space-change --ignore-white
     }
 }
 
