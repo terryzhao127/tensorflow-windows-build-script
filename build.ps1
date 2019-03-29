@@ -182,6 +182,10 @@ if ($BuildCppAPI) {
         # C++ Symbol Patch for v1.12.0
         git apply --ignore-space-change --ignore-white "..\patches\cpp_symbol.1.12.0.patch"
         Copy-Item ..\patches\tf_exported_symbols_msvc.lds tensorflow\
+    } elseif ($buildVersion -eq "v1.13.1") {
+        # C++ Symbol Patch for v1.13.1
+        git apply --ignore-space-change --ignore-white "..\patches\cpp_symbol.1.13.1.patch"
+        Copy-Item ..\patches\tf_exported_symbols_msvc.lds tensorflow\
     }
 }
 
