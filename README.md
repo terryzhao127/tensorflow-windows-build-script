@@ -6,7 +6,7 @@ Building Tensorflow on Windows is really a **tough** thing and there should be m
 * Management of Environment Variables
 * Patching *(For more information, view [wiki](https://github.com/guikarist/tensorflow-windows-build-script/wiki/patches))*
 
-*This script has been tested on `v1.13.1` (partially tested), `v1.12.0` and `v1.11.0`.*
+*This script has been tested on `v1.13.1`, `v1.12.0` and `v1.11.0`.*
 
 However, this script may work on several unsupported versions. If you did this and succeeded, it would be nice of you to add your configurations to the script by pull requests! Through [Bulletin Board](#bulletin-board)
 
@@ -17,7 +17,7 @@ However, this script may work on several unsupported versions. If you did this a
 You may need to do some preparations below:
 
 * **If you need to build GPU version,** you need to follow this [official guide](https://www.tensorflow.org/install/gpu) to install GPU support.
-* **If you need to build C++ API on `v1.11.0` and `v1.12.0`,** you should add symbols that you need into `patches\tf_exported_symbols_msvc.lds`. If you don't know what symbols you need, never mind and skip this step. When you use the built C++ API, the linker will probably give you link errors, telling what symbols you need.
+* **If you need to build C++ API on `v1.11.0`， `v1.12.0` and `v1.13.1`,** you should add symbols that you need into `patches\tf_exported_symbols_msvc.lds`. If you don't know what symbols you need, never mind and skip this step. When you use the built C++ API, the linker will probably give you link errors, telling what symbols you need.
 
 ### Building
 
@@ -49,7 +49,7 @@ You may need to do some preparations below:
 
 * `-BuildCppAPI` *Optional*
 
-    This is needed when buiding C++ API of `v1.12.0` and `v1.11.0`.
+    This is needed when buiding C++ API of `v1.11.0`， `v1.12.0` and `v1.13.1`.
 
 * `-ReserveSource` *Optional*
 
