@@ -106,7 +106,6 @@ if (!(CheckInstalled chocolatey)) {
 choco feature enable -n allowGlobalConfirmation | Out-Null # Enable global confirmation for chocolatey package installation.
 
 $ENV:Path += ";C:\msys64\usr\bin"
-$ENV:Path += ";C:\Program Files\CMake\bin"
 $ENV:BAZEL_SH = "C:\msys64\usr\bin\bash.exe"
 
 if (!(CheckInstalled pacman)) {
@@ -127,11 +126,6 @@ if (!(CheckInstalled bazel $bazelVersion)) {
 
     # Bazel will also install msys2, but with an incorrect version, so we will ignore the dependencies.
     choco install bazel --version $version --ignore-dependencies
-}
-
-if (!(CheckInstalled cmake "3.12")) {
-    $version = askForVersion "3.12"
-    choco install cmake --version $version
 }
 
 if (!(CheckInstalled git)) {
