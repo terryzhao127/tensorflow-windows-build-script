@@ -95,13 +95,15 @@ $parameterString = "--config=opt --config=cuda --define=no_tensorflow_py_deps=tr
 
 Here are some TODO items waiting for your best solutions!
 
-- [ ] Test whether C++ API of `v1.13.1` worked, whose symbol issues are not tested yet.
+- [ ] Add support to build the latest version.
+- [ ] Fix the lack of Bazel version and rewrite `AskForVersion`.
 - [ ] Edit the script to support new C API after (not including) `v1.13.1` which is committed in [this issue](https://github.com/tensorflow/tensorflow/pull/24963#issue-245158918).
 - [ ] Pay attention to [new C++ API](https://github.com/tensorflow/tensorflow/pull/26152).
 
 <details>
   <summary>Done</summary>
 
+- [x] Test whether C++ API of `v1.13.1` worked, whose symbol issues are not tested yet.
 - [x] Try building with latest version of Tensorflow which supports building DLL. (v1.13)
 - [x] Write an example to use built results.
 - [x] Delete the API which builds protobuf.
