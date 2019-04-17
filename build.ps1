@@ -16,7 +16,7 @@ param (
 Set-StrictMode -Version latest
 $ErrorActionPreference = "Stop"
 
-# Cleaning Work
+# Cleaning work
 if (Test-Path tensorflow) {
     Remove-Item tensorflow -Force -Recurse
 }
@@ -46,7 +46,7 @@ if ($supportedVersions.Count -eq $chosenIndex + 1) {
     $buildVersion = $supportedVersions[$chosenIndex]
 }
 
-# Install dependencies.
+# Functions used in installation of dependencies
 function CheckInstalled {
     param (
         [string]$ExeName,
@@ -89,7 +89,7 @@ function askForVersion {
     return $version
 }
 
-# Assign correct version of dependencies.
+# Assign correct versions of dependencies.
 if ($buildVersion -eq "v1.11.0" -or $buildVersion -eq "v1.12.0") {
     $bazelVersion = "0.15.0"
 } elseif ($buildVersion -eq "v1.13.1") {
@@ -102,16 +102,14 @@ if (!(CheckInstalled chocolatey)) {
     Set-ExecutionPolicy Bypass -Scope Process -Force
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString("https://chocolatey.org/install.ps1"))
 }
-
 choco feature enable -n allowGlobalConfirmation | Out-Null # Enable global confirmation for chocolatey package installation.
-
-$ENV:Path += ";C:\msys64\usr\bin"
-$ENV:BAZEL_SH = "C:\msys64\usr\bin\bash.exe"
 
 if (!(CheckInstalled pacman)) {
     $version = askForVersion "20180531.0.0"
     choco install msys2 --version $version --params "/NoUpdate /InstallDir:C:\msys64"
 }
+$ENV:Path += ";C:\msys64\usr\bin"
+$ENV:BAZEL_SH = "C:\msys64\usr\bin\bash.exe"
 
 if (!(CheckInstalled patch)) {
     pacman -S --noconfirm patch
@@ -205,7 +203,7 @@ if (!$ReserveVenv) {
 Set-Location $sourceDir
 
 if ($ReserveSource) {
-    # Cleaning Bazel files.
+    # Clean Bazel files.
     bazel clean --expunge
 }
 
