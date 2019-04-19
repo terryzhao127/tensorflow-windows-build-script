@@ -95,6 +95,7 @@ $parameterString = "--config=opt --config=cuda --define=no_tensorflow_py_deps=tr
 
 Here are some TODO items waiting for your best solutions!
 
+- [ ] Add support for `v1.12.2`.
 - [ ] Add support to build the latest version.
 - [ ] Fix the lack of Bazel version and rewrite `AskForVersion`.
 - [ ] Edit the script to support new C API after (not including) `v1.13.1` which is committed in [this issue](https://github.com/tensorflow/tensorflow/pull/24963#issue-245158918).
