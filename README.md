@@ -15,7 +15,7 @@ However, this script may work on several unsupported versions. If you did this a
 ### Prerequisites
 
 You may need to do some preparations below:
-
+* [Turn on function of running PowerShell scripts](https://go.microsoft.com/fwlink/?LinkID=135170) on your computer if not done before.
 * **If you need to build GPU version,** you need to follow this [official guide](https://www.tensorflow.org/install/gpu) to install GPU support.
 * **If you need to build C++ API on `v1.11.0`， `v1.12.0` and `v1.13.1`,** you should add symbols that you need into `patches\tf_exported_symbols_msvc.lds`. If you don't know what symbols you need, never mind and skip this step. When you use the built C++ API, the linker will probably give you link errors, telling what symbols you need.
 
