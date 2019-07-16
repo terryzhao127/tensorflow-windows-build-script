@@ -40,7 +40,7 @@ $options += [System.Management.Automation.Host.ChoiceDescription]::new("&Select 
 $title = "Select a Tensorflow version:"
 $chosenIndex = $Host.UI.PromptForChoice($title, "", $options, 0)
 
-if ($supportedVersions.Count -eq $chosenIndex + 1) {
+if ($supportedVersions.Count -eq $chosenIndex) {
     $buildVersion = Read-Host "Please input the version tag (e.g. v1.11.0)"
 } else {
     $buildVersion = $supportedVersions[$chosenIndex]
