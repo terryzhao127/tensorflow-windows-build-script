@@ -89,4 +89,4 @@ $parameterString = "--config=opt --config=cuda --define=no_tensorflow_py_deps=tr
 ## Bulletin Board
 
 * New C API (committed): <https://github.com/tensorflow/tensorflow/pull/24963>
-* New C++ API (colsed): <https://github.com/tensorflow/tensorflow/pull/26152>
+* New C++ API (closed): <https://github.com/tensorflow/tensorflow/pull/26152>
