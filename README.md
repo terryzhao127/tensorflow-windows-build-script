@@ -90,30 +90,3 @@ $parameterString = "--config=opt --config=cuda --define=no_tensorflow_py_deps=tr
 
 * New C API (committed): <https://github.com/tensorflow/tensorflow/pull/24963>
 * New C++ API: <https://github.com/tensorflow/tensorflow/pull/26152>
-
-## TODO
-
-Here are some TODO items waiting for your best solutions!
-
-- [ ] Add support for `v1.12.2`.
-- [ ] Add support to build the latest version.
-- [ ] Fix the lack of Bazel version and rewrite `AskForVersion`.
-- [ ] Edit the script to support new C API after (not including) `v1.13.1` which is committed in [this issue](https://github.com/tensorflow/tensorflow/pull/24963#issue-245158918).
-- [ ] Pay attention to [new C++ API](https://github.com/tensorflow/tensorflow/pull/26152).
-
-<details>
-  <summary>Done</summary>
-
-- [x] Test whether C++ API of `v1.13.1` worked, whose symbol issues are not tested yet.
-- [x] Try building with latest version of Tensorflow which supports building DLL. (v1.13)
-- [x] Write an example to use built results.
-- [x] Delete the API which builds protobuf.
-- [x] Write a wiki about details of patches.
-- [x] Add support for other versions of Tensorflow.
-- [x] Check if a **specific** version of dependency is installed and give a warning if another version of it is installed.
-- [x] Refactor the structure of script.
-- [x] Change how to process the output files.
-- [x] Denote how to solve the symbol problem in C++ API.
-- [x] Let user choose what versions of dependencies to install.
-
-</details>
