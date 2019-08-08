@@ -1,0 +1,53 @@
+From ec727016282383aacf9d26386b01f6bdbd65b14b Mon Sep 17 00:00:00 2001
+From: Pavel Samolysov <samolisov@gmail.com>
+Date: Thu, 1 Nov 2018 13:39:52 +0300
+Subject: [PATCH] Fix the C2678 MSVC compilation error
+
+MSVC 14.15 returns the C2678 error during a compilation of the
+'tensorflow/core/kernels/data/scan_dataset_op.cc' unit:
+
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.15.26726\include\xmemory(217):
+error C2678: binary '*': no operator found which takes a left-hand
+operand of type 'const _Iter' (or there is no acceptable conversion)
+with
+[
+    _Iter=tensorflow::OpInputList::Iterator
+]
+
+.\tensorflow/core/framework/op_kernel.h(405):
+note: could be 'const tensorflow::Tensor &tensorflow::OpArgIterator<tensorflow::OpInputList,
+    const tensorflow::Tensor>::operator *(void)'
+
+Two const operator functions: 'operator*() const' and 'operator->()
+const', returning a const pointer or const reference respectively,
+have been added to the 'OpArgIterator' template class.
+
+Signed-off-by: Pavel Samolysov <samolisov@gmail.com>
+---
+ tensorflow/core/framework/op_kernel.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/tensorflow/core/framework/op_kernel.h b/tensorflow/core/framework/op_kernel.h
+index 6c71e118c024..c8e522002884 100644
+--- a/tensorflow/core/framework/op_kernel.h
++++ b/tensorflow/core/framework/op_kernel.h
+@@ -376,7 +376,9 @@ class OpArgIterator {
+   using iterator_category = std::forward_iterator_tag;
+   using value_type = ElementType;
+   using pointer = ElementType*;
++  using const_pointer = const ElementType*;
+   using reference = ElementType&;
++  using const_reference = const ElementType&;
+   using difference_type = ptrdiff_t;
+ 
+   OpArgIterator(const ListType* list, int i) : list_(list), i_(i) {}
+@@ -405,6 +407,9 @@ class OpArgIterator {
+   reference operator*() { return (*list_)[i_]; }
+   pointer operator->() { return &(*list_)[i_]; }
+ 
++  const_reference operator*() const { return (*list_)[i_]; }
++  const_pointer operator->() const { return &(*list_)[i_]; }
++
+  private:
+   const ListType* const list_;
+   int i_;
